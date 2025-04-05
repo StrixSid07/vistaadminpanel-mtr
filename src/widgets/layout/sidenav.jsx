@@ -131,7 +131,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
 
 Sidenav.defaultProps = {
   brandImg: "/img/faviocn.ico",
-  brandName: `${user.name}`,
+  brandName: `${user.name} || Admin`,
 };
 
 Sidenav.propTypes = {
