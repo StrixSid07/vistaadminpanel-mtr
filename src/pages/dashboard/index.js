@@ -6,3 +6,4 @@ export * from "@/pages/dashboard/managehotel";
 export * from "@/pages/dashboard/managedestination";
 export * from "@/pages/dashboard/manageuser";
 export * from "@/pages/dashboard/managefaqs";
+export * from "@/pages/dashboard/manageterms";

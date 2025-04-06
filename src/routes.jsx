@@ -1,6 +1,7 @@
 import {
   HomeIcon,
   QuestionMarkCircleIcon,
+  CheckCircleIcon,
   MapPinIcon,
   HomeModernIcon,
   UserCircleIcon,
@@ -19,6 +20,7 @@ import {
   ManageDestination,
   ManageUsers,
   ManageFaqs,
+  ManageTerms,
 } from "@/pages/dashboard";
 import { SignUp, LogIn } from "@/pages/auth";
 
@@ -77,6 +79,12 @@ export const routes = [
         name: "Manage Faqs",
         path: "/manage-faqs",
         element: <ManageFaqs />,
+      },
+      {
+        icon: <CheckCircleIcon {...icon} />,
+        name: "Manage Terms",
+        path: "/manage-terms",
+        element: <ManageTerms />,
       },
     ],
   },
