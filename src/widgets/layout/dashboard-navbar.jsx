@@ -26,7 +26,7 @@ import {
   setOpenSidenav,
 } from "@/context";
 
-export function DashboardNavbar() {
+export function DashboardNavbar({ searchQuery, onSearchChange }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { fixedNavbar, openSidenav } = controller;
   const { pathname } = useLocation();
@@ -79,7 +79,11 @@ export function DashboardNavbar() {
         </div>
         <div className="flex items-center">
           <div className="mr-auto md:mr-4 md:w-56">
-            <Input label="Search" />
+            <Input
+              label="Search"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+            />
           </div>
           <IconButton
             variant="text"
@@ -92,22 +96,18 @@ export function DashboardNavbar() {
           <Link to="/auth/sign-in">
             <Button
               variant="text"
-              color="blue-gray"
+              color="red"
               onClick={handleLogout}
-              className="hidden items-center gap-1 px-4 normal-case xl:flex"
+              className="group hidden items-center gap-1 px-4 normal-case xl:flex"
             >
-              <ArrowLeftOnRectangleIcon className="h-5 w-5 text-blue-gray-500" />
+              <ArrowLeftOnRectangleIcon className="h-5 w-5 text-red-500 transition-colors duration-500 ease-in-out group-hover:text-red-900" />
               Logout
             </Button>
-            <IconButton
-              variant="text"
-              color="blue-gray"
-              className="grid xl:hidden"
-            >
-              <ArrowLeftOnRectangleIcon className="h-5 w-5 text-blue-gray-500" />
+            <IconButton variant="text" color="red" className="grid xl:hidden">
+              <ArrowLeftOnRectangleIcon className="h-5 w-5 text-red-500 transition-colors duration-500 ease-in-out group-hover:text-red-600" />
             </IconButton>
           </Link>
-          <Menu>
+          {/* <Menu>
             <MenuHandler>
               <IconButton variant="text" color="blue-gray">
                 <BellIcon className="h-5 w-5 text-blue-gray-500" />
@@ -184,7 +184,7 @@ export function DashboardNavbar() {
                 </div>
               </MenuItem>
             </MenuList>
-          </Menu>
+          </Menu> */}
           <IconButton
             variant="text"
             color="blue-gray"
