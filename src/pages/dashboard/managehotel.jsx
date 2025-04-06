@@ -344,6 +344,7 @@ import axios from "@/utils/axiosInstance";
 export function ManageHotel() {
   const [hotels, setHotels] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
+  const [imageUrls, setImageUrls] = useState([""]);
   const [openViewDialog, setOpenViewDialog] = useState(false); // State for view dialog
   const [currentHotel, setCurrentHotel] = useState(null);
   const [formData, setFormData] = useState({
@@ -360,6 +361,24 @@ export function ManageHotel() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [hotelName, setHotelName] = useState("");
+
+  const handleAddImageUrl = () => {
+    if (imageUrls.length < 6) {
+      // Check if the current length is less than 6
+      setImageUrls([...imageUrls, ""]); // Add a new empty string to the array
+    }
+  };
+
+  const handleImageUrlChange = (index, value) => {
+    const updatedUrls = [...imageUrls];
+    updatedUrls[index] = value; // Update the specific index with the new value
+    setImageUrls(updatedUrls);
+  };
+
+  const handleRemoveImageUrl = (index) => {
+    const updatedUrls = imageUrls.filter((_, i) => i !== index); // Remove the URL at the specified index
+    setImageUrls(updatedUrls);
+  };
 
   useEffect(() => {
     fetchHotels();
@@ -398,6 +417,7 @@ export function ManageHotel() {
             images: [],
           },
     );
+    setImageUrls(hotel ? hotel.images : [""]);
     setOpenDialog(true);
   };
 
@@ -421,11 +441,15 @@ export function ManageHotel() {
     e.preventDefault();
     setLoading(true);
     try {
+      const dataToSubmit = {
+        ...formData,
+        images: imageUrls.filter((url) => url.trim() !== ""), // Filter out empty URLs
+      };
       if (currentHotel) {
-        await axios.put(`/hotels/${currentHotel._id}`, formData);
+        await axios.put(`/hotels/${currentHotel._id}`, dataToSubmit);
         setAlert({ message: "Hotel updated successfully!", type: "green" });
       } else {
-        await axios.post("/hotels", formData);
+        await axios.post("/hotels", dataToSubmit);
         setAlert({ message: "Hotel added successfully!", type: "green" });
       }
       fetchHotels();
@@ -619,18 +643,40 @@ export function ManageHotel() {
                 })
               }
             />
-            <Input
-              label="Images (comma separated URLs)"
-              value={formData.images.join(", ")}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  images: e.target.value
-                    .split(",")
-                    .map((image) => image.trim()),
-                })
-              }
-            />
+            <div>
+              <Typography variant="h6">Images</Typography>
+              {imageUrls.map((url, index) => (
+                <div
+                  key={index}
+                  className="mt-2 flex items-center justify-center space-x-2"
+                >
+                  <Input
+                    label={`Image URL ${index + 1}`}
+                    value={url}
+                    onChange={(e) =>
+                      handleImageUrlChange(index, e.target.value)
+                    }
+                    className="flex-1"
+                  />
+                  <Button
+                    color="red"
+                    onClick={() => handleRemoveImageUrl(index)}
+                    variant="text"
+                    className="p-2"
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+              <Button
+                color="blue"
+                onClick={handleAddImageUrl}
+                className="mt-2"
+                disabled={imageUrls.length >= 6}
+              >
+                Add Another Image URL
+              </Button>
+            </div>
           </form>
         </DialogBody>
         <DialogFooter>
