@@ -23,7 +23,6 @@ import {
   ManageFaqs,
   ManageTerms,
   ManageDeals,
-  ManageDeals2,
 } from "@/pages/dashboard";
 import { SignUp, LogIn } from "@/pages/auth";
 
@@ -35,30 +34,30 @@ export const routes = [
   {
     layout: "dashboard",
     pages: [
-      {
-        icon: <HomeIcon {...icon} />,
-        name: "dashboard",
-        path: "/home",
-        element: <Home />,
-      },
-      {
-        icon: <UserCircleIcon {...icon} />,
-        name: "profile",
-        path: "/profile",
-        element: <Profile />,
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "tables",
-        path: "/tables",
-        element: <Tables />,
-      },
-      {
-        icon: <InformationCircleIcon {...icon} />,
-        name: "notifications",
-        path: "/notifications",
-        element: <Notifications />,
-      },
+      // {
+      //   icon: <HomeIcon {...icon} />,
+      //   name: "dashboard",
+      //   path: "/home",
+      //   element: <Home />,
+      // },
+      // {
+      //   icon: <UserCircleIcon {...icon} />,
+      //   name: "profile",
+      //   path: "/profile",
+      //   element: <Profile />,
+      // },
+      // {
+      //   icon: <TableCellsIcon {...icon} />,
+      //   name: "tables",
+      //   path: "/tables",
+      //   element: <Tables />,
+      // },
+      // {
+      //   icon: <InformationCircleIcon {...icon} />,
+      //   name: "notifications",
+      //   path: "/notifications",
+      //   element: <Notifications />,
+      // },
       {
         icon: <UserIcon {...icon} />,
         name: "Manage Users",
@@ -82,12 +81,6 @@ export const routes = [
         name: "Manage Deals",
         path: "/manage-deals",
         element: <ManageDeals />,
-      },
-      {
-        icon: <SwatchIcon {...icon} />,
-        name: "Manage Deals 2",
-        path: "/manage-deals2",
-        element: <ManageDeals2 />,
       },
       {
         icon: <QuestionMarkCircleIcon {...icon} />,

@@ -8,4 +8,3 @@ export * from "@/pages/dashboard/manageuser";
 export * from "@/pages/dashboard/managefaqs";
 export * from "@/pages/dashboard/manageterms";
 export * from "@/pages/dashboard/managedeals";
-export * from "@/pages/dashboard/managedeals2";
