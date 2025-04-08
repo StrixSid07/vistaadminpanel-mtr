@@ -6,6 +6,7 @@ import {
   HomeModernIcon,
   UserCircleIcon,
   UserIcon,
+  SwatchIcon,
   TableCellsIcon,
   InformationCircleIcon,
   ServerStackIcon,
@@ -21,6 +22,8 @@ import {
   ManageUsers,
   ManageFaqs,
   ManageTerms,
+  ManageDeals,
+  ManageDeals2,
 } from "@/pages/dashboard";
 import { SignUp, LogIn } from "@/pages/auth";
 
@@ -57,6 +60,12 @@ export const routes = [
         element: <Notifications />,
       },
       {
+        icon: <UserIcon {...icon} />,
+        name: "Manage Users",
+        path: "/manage-users",
+        element: <ManageUsers />,
+      },
+      {
         icon: <HomeModernIcon {...icon} />,
         name: "Manage Hotels",
         path: "/manage-hotel",
@@ -69,10 +78,16 @@ export const routes = [
         element: <ManageDestination />,
       },
       {
-        icon: <UserIcon {...icon} />,
-        name: "Manage Users",
-        path: "/manage-users",
-        element: <ManageUsers />,
+        icon: <SwatchIcon {...icon} />,
+        name: "Manage Deals",
+        path: "/manage-deals",
+        element: <ManageDeals />,
+      },
+      {
+        icon: <SwatchIcon {...icon} />,
+        name: "Manage Deals 2",
+        path: "/manage-deals2",
+        element: <ManageDeals2 />,
       },
       {
         icon: <QuestionMarkCircleIcon {...icon} />,
