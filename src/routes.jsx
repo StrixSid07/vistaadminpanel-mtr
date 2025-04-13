@@ -4,6 +4,7 @@ import {
   CheckCircleIcon,
   MapPinIcon,
   HomeModernIcon,
+  PhotoIcon,
   UserCircleIcon,
   UserIcon,
   SwatchIcon,
@@ -23,6 +24,7 @@ import {
   ManageFaqs,
   ManageTerms,
   ManageDeals,
+  ManageCarousel,
 } from "@/pages/dashboard";
 import { SignUp, LogIn } from "@/pages/auth";
 
@@ -93,6 +95,12 @@ export const routes = [
         name: "Manage Terms",
         path: "/manage-terms",
         element: <ManageTerms />,
+      },
+      {
+        icon: <PhotoIcon {...icon} />,
+        name: "Manage Carousel",
+        path: "/manage-carousel",
+        element: <ManageCarousel />,
       },
     ],
   },

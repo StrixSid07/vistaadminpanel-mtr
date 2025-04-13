@@ -24,6 +24,7 @@ import {
   PencilSquareIcon,
   TrashIcon,
   EyeIcon,
+  EyeSlashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import axios from "@/utils/axiosInstance";
@@ -52,6 +53,10 @@ export const ManageDeals = () => {
     boardBasis: "",
     hotels: [],
     iternatiy: [""],
+    whatsIncluded: [""],
+    exclusiveAdditions: [""],
+    termsAndConditions: [""],
+    tag: "",
     images: [],
     prices: [
       {
@@ -79,6 +84,7 @@ export const ManageDeals = () => {
     ],
   });
   const [loading, setLoading] = useState(false);
+  const [expandedSection, setExpandedSection] = useState(null);
   const [alert, setAlert] = useState({ message: "", type: "" });
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -156,7 +162,28 @@ export const ManageDeals = () => {
                 : Array.isArray(deal.iternatiy)
                 ? deal.iternatiy
                 : [""],
+            whatsIncluded:
+              deal.whatsIncluded && typeof deal.whatsIncluded === "string"
+                ? deal.whatsIncluded.split(",")
+                : Array.isArray(deal.whatsIncluded)
+                ? deal.whatsIncluded
+                : [""],
+            exclusiveAdditions:
+              deal.exclusiveAdditions &&
+              typeof deal.exclusiveAdditions === "string"
+                ? deal.exclusiveAdditions.split(",")
+                : Array.isArray(deal.exclusiveAdditions)
+                ? deal.exclusiveAdditions
+                : [""],
+            termsAndConditions:
+              deal.termsAndConditions &&
+              typeof deal.termsAndConditions === "string"
+                ? deal.termsAndConditions.split(",")
+                : Array.isArray(deal.termsAndConditions)
+                ? deal.termsAndConditions
+                : [""],
             images: [],
+            tag: deal.tag,
             prices:
               deal.prices.length > 0
                 ? deal.prices.map((price) => ({
@@ -210,6 +237,10 @@ export const ManageDeals = () => {
             hotels: [],
             images: [],
             iternatiy: [""],
+            whatsIncluded: [""],
+            exclusiveAdditions: [""],
+            termsAndConditions: [""],
+            tag: "",
             prices: [
               {
                 country: "",
@@ -318,6 +349,10 @@ export const ManageDeals = () => {
       setOpenDeleteDialog(false);
       setDeleteId(null);
     }
+  };
+
+  const toggleSection = (section) => {
+    setExpandedSection(expandedSection === section ? null : section);
   };
 
   return (
@@ -440,6 +475,14 @@ export const ManageDeals = () => {
               value={formData.description}
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
+              }
+              required
+            />
+            <Input
+              label="Deal Tag"
+              value={formData.tag}
+              onChange={(e) =>
+                setFormData({ ...formData, tag: e.target.value })
               }
               required
             />
@@ -878,6 +921,132 @@ export const ManageDeals = () => {
               + Add Day
             </Button>
 
+            <Typography variant="h6">What's Included</Typography>
+            {formData.whatsIncluded.map((item, index) => (
+              <div key={index} className="mb-2 flex items-center gap-2">
+                <Input
+                  label={`Item ${index + 1}`}
+                  value={item}
+                  onChange={(e) => {
+                    const updated = [...formData.whatsIncluded];
+                    updated[index] = e.target.value;
+                    setFormData({ ...formData, whatsIncluded: updated });
+                  }}
+                  className="flex-1"
+                />
+                {formData.whatsIncluded.length > 1 && (
+                  <Button
+                    size="sm"
+                    color="red"
+                    onClick={() => {
+                      const updated = formData.whatsIncluded.filter(
+                        (_, i) => i !== index,
+                      );
+                      setFormData({ ...formData, whatsIncluded: updated });
+                    }}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+            ))}
+            <Button
+              size="sm"
+              color="blue"
+              onClick={() =>
+                setFormData({
+                  ...formData,
+                  whatsIncluded: [...formData.whatsIncluded, ""],
+                })
+              }
+            >
+              + Add Item
+            </Button>
+
+            <Typography variant="h6">Exclusive Additions</Typography>
+            {formData.exclusiveAdditions.map((item, index) => (
+              <div key={index} className="mb-2 flex items-center gap-2">
+                <Input
+                  label={`Addition ${index + 1}`}
+                  value={item}
+                  onChange={(e) => {
+                    const updated = [...formData.exclusiveAdditions];
+                    updated[index] = e.target.value;
+                    setFormData({ ...formData, exclusiveAdditions: updated });
+                  }}
+                  className="flex-1"
+                />
+                {formData.exclusiveAdditions.length > 1 && (
+                  <Button
+                    size="sm"
+                    color="red"
+                    onClick={() => {
+                      const updated = formData.exclusiveAdditions.filter(
+                        (_, i) => i !== index,
+                      );
+                      setFormData({ ...formData, exclusiveAdditions: updated });
+                    }}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+            ))}
+            <Button
+              size="sm"
+              color="blue"
+              onClick={() =>
+                setFormData({
+                  ...formData,
+                  exclusiveAdditions: [...formData.exclusiveAdditions, ""],
+                })
+              }
+            >
+              + Add Addition
+            </Button>
+
+            <Typography variant="h6">Terms and Conditions</Typography>
+            {formData.termsAndConditions.map((item, index) => (
+              <div key={index} className="mb-2 flex items-center gap-2">
+                <Input
+                  label={`Clause ${index + 1}`}
+                  value={item}
+                  onChange={(e) => {
+                    const updated = [...formData.termsAndConditions];
+                    updated[index] = e.target.value;
+                    setFormData({ ...formData, termsAndConditions: updated });
+                  }}
+                  className="flex-1"
+                />
+                {formData.termsAndConditions.length > 1 && (
+                  <Button
+                    size="sm"
+                    color="red"
+                    onClick={() => {
+                      const updated = formData.termsAndConditions.filter(
+                        (_, i) => i !== index,
+                      );
+                      setFormData({ ...formData, termsAndConditions: updated });
+                    }}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+            ))}
+            <Button
+              size="sm"
+              color="blue"
+              onClick={() =>
+                setFormData({
+                  ...formData,
+                  termsAndConditions: [...formData.termsAndConditions, ""],
+                })
+              }
+            >
+              + Add Clause
+            </Button>
+
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
               <Input
                 label="Number of Rooms"
@@ -919,9 +1088,17 @@ export const ManageDeals = () => {
               type="file"
               multiple
               onChange={(e) => {
+                const files = Array.from(e.target.files);
+
+                if (files.length > 5) {
+                  alert("You can only upload up to 5 images.");
+                  e.target.value = ""; // reset the input
+                  return;
+                }
+
                 setFormData({
                   ...formData,
-                  images: Array.from(e.target.files),
+                  images: files,
                 });
               }}
             />
@@ -945,6 +1122,12 @@ export const ManageDeals = () => {
             className="flex items-center gap-2 text-deep-orange-400"
           >
             {currentDeal ? currentDeal.title : "Deal Details"}
+          </Typography>
+          <Typography
+            variant="h6"
+            className="flex items-center gap-2 text-deep-orange-400"
+          >
+            Tag: {currentDeal ? currentDeal.tag : "Deal Tag"}
           </Typography>
           <div className="flex items-center justify-center gap-2">
             <Tooltip
@@ -1247,6 +1430,108 @@ export const ManageDeals = () => {
                       <Typography variant="paragraph" className="text-black">
                         No images available.
                       </Typography>
+                    )}
+                  </div>
+                </CardBody>
+              </Card>
+
+              <Card className="border border-blue-500 shadow-md">
+                <CardHeader color="blue" className="p-4">
+                  <Typography variant="h6" className="text-white">
+                    Additional Details
+                  </Typography>
+                </CardHeader>
+                <CardBody className="space-y-4 p-4 text-black">
+                  {/* whatsIncluded */}
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Typography className="font-bold text-deep-orange-500">
+                        What's Included
+                      </Typography>
+                      <Button
+                        size="sm"
+                        color="blue"
+                        varient="gradient"
+                        onClick={() => toggleSection("whatsIncluded")}
+                      >
+                        {expandedSection === "whatsIncluded"
+                          ? "View Less"
+                          : `View More`}
+                      </Button>
+                    </div>
+                    {expandedSection === "whatsIncluded" && (
+                      <ul className="mt-2 list-disc pl-5">
+                        {currentDeal.whatsIncluded &&
+                        currentDeal.whatsIncluded.length > 0 ? (
+                          currentDeal.whatsIncluded.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))
+                        ) : (
+                          <li>No details available.</li>
+                        )}
+                      </ul>
+                    )}
+                  </div>
+
+                  {/* exclusiveAdditions */}
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Typography className="font-bold text-deep-orange-500">
+                        Exclusive Additions
+                      </Typography>
+                      <Button
+                        size="sm"
+                        varient="gradient"
+                        color="blue"
+                        onClick={() => toggleSection("exclusiveAdditions")}
+                      >
+                        {expandedSection === "exclusiveAdditions"
+                          ? "View Less"
+                          : "View More"}
+                      </Button>
+                    </div>
+                    {expandedSection === "exclusiveAdditions" && (
+                      <ul className="mt-2 list-disc pl-5">
+                        {currentDeal.exclusiveAdditions &&
+                        currentDeal.exclusiveAdditions.length > 0 ? (
+                          currentDeal.exclusiveAdditions.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))
+                        ) : (
+                          <li>No details available.</li>
+                        )}
+                      </ul>
+                    )}
+                  </div>
+
+                  {/* termsAndConditions */}
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Typography className="font-bold text-deep-orange-500">
+                        Terms & Conditions
+                      </Typography>
+                      <Button
+                        size="sm"
+                        color="blue"
+                        varient="gradient"
+                        onClick={() => toggleSection("termsAndConditions")}
+                      >
+                        {expandedSection === "termsAndConditions"
+                          ? "View Less"
+                          : "View More"}
+                      </Button>
+                    </div>
+                    {expandedSection === "termsAndConditions" && (
+                      <ul className="mt-2 list-disc pl-5">
+                        {currentDeal.termsAndConditions &&
+                        currentDeal.termsAndConditions.length > 0 ? (
+                          currentDeal.termsAndConditions.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))
+                        ) : (
+                          <li>No details available.</li>
+                        )}
+                      </ul>
                     )}
                   </div>
                 </CardBody>
