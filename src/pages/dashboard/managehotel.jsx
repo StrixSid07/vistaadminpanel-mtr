@@ -410,10 +410,6 @@ export function ManageHotel() {
               content="Edit"
               placement="left"
               className="z-[50000] font-medium text-green-600"
-              animate={{
-                mount: { scale: 1, x: 0 },
-                unmount: { scale: 0, x: 25 },
-              }}
             >
               <Button
                 variant="text"
@@ -421,7 +417,7 @@ export function ManageHotel() {
                 color="green"
                 onClick={() => {
                   handleOpenDialog(currentHotel);
-                  handleCloseViewDialog(); // Close this dialog when edit is clicked
+                  handleCloseViewDialog();
                 }}
                 title="Edit"
               >
@@ -432,10 +428,6 @@ export function ManageHotel() {
               content="Delete"
               placement="top"
               className="z-[50000] font-medium text-red-600"
-              animate={{
-                mount: { scale: 1, y: 0 },
-                unmount: { scale: 0, y: 25 },
-              }}
             >
               <Button
                 variant="text"
@@ -453,10 +445,6 @@ export function ManageHotel() {
               content="Close"
               placement="right"
               className="z-[50000] font-medium text-purple-600"
-              animate={{
-                mount: { scale: 1, x: -0 },
-                unmount: { scale: 0, x: -25 },
-              }}
             >
               <Button
                 variant="text"
@@ -471,43 +459,125 @@ export function ManageHotel() {
           </div>
         </DialogHeader>
 
-        <DialogBody>
+        <DialogBody className="max-h-[80vh] space-y-4 overflow-y-auto px-4">
           {currentHotel && (
             <div className="space-y-4">
-              <Typography variant="h6">
-                Location: {currentHotel.location}
+              <Typography variant="h5" color="orange">
+                📍 Location:
               </Typography>
-              <Typography variant="h6">
-                Location ID: {currentHotel.locationId}
+              <Typography color="black" variant="h6" className="pl-2">
+                {currentHotel.location}
               </Typography>
-              <Typography variant="h6">About: {currentHotel.about}</Typography>
-              <Typography variant="h6">
-                Facilities: {currentHotel.facilities.join(", ")}
+
+              <Typography variant="h5" color="orange">
+                🆔 Location ID:
               </Typography>
-              <Typography variant="h6">
-                External Booking Link:{" "}
-                <a
-                  href={currentHotel.externalBookingLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 underline"
-                >
-                  {currentHotel.externalBookingLink}
-                </a>
+              <Typography
+                color="black"
+                variant="h6"
+                className="ml-8 w-fit rounded-md bg-blue-200 px-2 py-1 pl-2"
+              >
+                {currentHotel.locationId}
               </Typography>
-              <Typography variant="h6">
-                Images:
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {currentHotel.images.map((image, index) => (
+
+              <Typography variant="h5" color="orange">
+                ℹ️ About:
+              </Typography>
+              <Typography
+                color="black"
+                variant="h6"
+                className="pl-2 text-justify"
+              >
+                {currentHotel.about}
+              </Typography>
+
+              <Typography variant="h5" color="orange">
+                🏅 TripAdvisor:
+              </Typography>
+              <Typography color="black" variant="h6" className="pl-2">
+                ⭐ {currentHotel.tripAdvisorRating} / 5 from{" "}
+                {currentHotel.tripAdvisorReviews} reviews
+              </Typography>
+
+              <Typography variant="h5" color="orange">
+                🎯 Facilities:
+              </Typography>
+              <ul className="text-md list-disc pl-6 font-semibold text-black">
+                {currentHotel.facilities.map((facility, i) => (
+                  <li key={i}>{facility}</li>
+                ))}
+              </ul>
+
+              <Typography variant="h5" color="orange">
+                🔗 External Booking:
+              </Typography>
+              <a
+                href={currentHotel.externalBookingLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block pl-2 text-blue-500 underline"
+              >
+                {currentHotel.externalBookingLink}
+              </a>
+
+              <Typography variant="h5" color="orange">
+                🖼️ Images:
+              </Typography>
+              <div className="flex flex-wrap gap-2 pl-2">
+                {currentHotel.images
+                  .concat(currentHotel.tripAdvisorPhotos || [])
+                  .map((img, i) => (
                     <img
-                      key={index}
-                      src={image}
-                      alt={`Hotel Image ${index + 1}`}
-                      className="h-20 w-20 rounded object-cover"
+                      key={i}
+                      src={img}
+                      alt={`Hotel Image ${i + 1}`}
+                      className="h-20 w-20 rounded border object-cover"
                     />
                   ))}
-                </div>
+              </div>
+
+              <Typography variant="h5" color="orange">
+                🛏️ Room Types:
               </Typography>
+              <ul className="text-md list-disc pl-6 font-semibold text-black">
+                {currentHotel.rooms.map((room) => (
+                  <li key={room._id}>
+                    {room.numberofrooms} rooms for up to {room.guestCapacity}{" "}
+                    guests
+                  </li>
+                ))}
+              </ul>
+
+              <Typography variant="h5" color="orange">
+                📝 Latest Reviews:
+              </Typography>
+              <div className="space-y-3 pl-2">
+                {currentHotel.tripAdvisorLatestReviews.map((review) => (
+                  <div
+                    key={review._id}
+                    className="rounded border border-gray-200 p-2 shadow-sm"
+                  >
+                    <Typography className="mb-1 w-fit rounded-lg bg-black/90 px-2 py-1 text-sm text-yellow-500">
+                      ⭐ {review.rating} / 5
+                    </Typography>
+                    <Typography className="whitespace-pre-line text-sm text-black">
+                      {review.review}
+                    </Typography>
+                  </div>
+                ))}
+              </div>
+
+              <Typography variant="h5" color="orange">
+                🌐 TripAdvisor Profile:
+              </Typography>
+              <a
+                href={currentHotel.tripAdvisorLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block pl-2 text-blue-500 underline"
+              >
+                {currentHotel.tripAdvisorLink}
+              </a>
             </div>
           )}
         </DialogBody>

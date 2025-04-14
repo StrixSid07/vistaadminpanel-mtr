@@ -57,6 +57,7 @@ export const ManageDeals = () => {
     exclusiveAdditions: [""],
     termsAndConditions: [""],
     tag: "",
+    LowDeposite: "",
     images: [],
     prices: [
       {
@@ -187,6 +188,7 @@ export const ManageDeals = () => {
                 : [""],
             images: [],
             tag: deal.tag,
+            LowDeposite: deal.LowDeposite,
             prices:
               deal.prices.length > 0
                 ? deal.prices.map((price) => ({
@@ -244,6 +246,7 @@ export const ManageDeals = () => {
             exclusiveAdditions: [""],
             termsAndConditions: [""],
             tag: "",
+            LowDeposite: "",
             prices: [
               {
                 country: "",
@@ -486,6 +489,14 @@ export const ManageDeals = () => {
               value={formData.tag}
               onChange={(e) =>
                 setFormData({ ...formData, tag: e.target.value })
+              }
+              required
+            />
+            <Input
+              label="Low Deposite"
+              value={formData.LowDeposite}
+              onChange={(e) =>
+                setFormData({ ...formData, LowDeposite: e.target.value })
               }
               required
             />
@@ -1242,6 +1253,12 @@ export const ManageDeals = () => {
                       Description:
                     </span>{" "}
                     {currentDeal.description || "N/A"}
+                  </Typography>
+                  <Typography variant="paragraph" className="text-black">
+                    <span className="font-bold text-deep-orange-500">
+                      Low Deposite:
+                    </span>{" "}
+                    {currentDeal.LowDeposite || "N/A"}
                   </Typography>
                   <Typography variant="paragraph" className="text-black">
                     <span className="font-bold text-deep-orange-500">
