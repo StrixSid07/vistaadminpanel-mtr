@@ -48,11 +48,11 @@ export const ManageDeals = () => {
     distanceToCenter: "",
     distanceToBeach: "",
     isTopDeal: false,
-    isHotDeal: false,
+    isHotdeal: false,
     isFeatured: false,
     boardBasis: "",
     hotels: [],
-    iternatiy: [""],
+    itinerary: [{ title: "", description: "" }],
     whatsIncluded: [""],
     exclusiveAdditions: [""],
     termsAndConditions: [""],
@@ -152,16 +152,19 @@ export const ManageDeals = () => {
             distanceToCenter: deal.distanceToCenter || "",
             distanceToBeach: deal.distanceToBeach || "",
             isTopDeal: deal.isTopDeal || false,
-            isHotDeal: deal.isHotDeal || false,
+            isHotdeal: deal.isHotdeal || false,
             isFeatured: deal.isFeatured || false,
             boardBasis: deal.boardBasis || "",
             hotels: deal.hotels || [],
-            iternatiy:
-              deal.iternatiy && typeof deal.iternatiy === "string"
-                ? deal.iternatiy.split(",")
-                : Array.isArray(deal.iternatiy)
-                ? deal.iternatiy
-                : [""],
+            itinerary:
+              deal.itinerary &&
+              Array.isArray(deal.itinerary) &&
+              deal.itinerary.length > 0
+                ? deal.itinerary.map((item) => ({
+                    title: item.title || "",
+                    description: item.description || "",
+                  }))
+                : [{ title: "", description: "" }],
             whatsIncluded:
               deal.whatsIncluded && typeof deal.whatsIncluded === "string"
                 ? deal.whatsIncluded.split(",")
@@ -231,12 +234,12 @@ export const ManageDeals = () => {
             distanceToCenter: "",
             distanceToBeach: "",
             isTopDeal: false,
-            isHotDeal: false,
+            isHotdeal: false,
             isFeatured: false,
             boardBasis: "",
             hotels: [],
             images: [],
-            iternatiy: [""],
+            itinerary: [{ title: "", description: "" }],
             whatsIncluded: [""],
             exclusiveAdditions: [""],
             termsAndConditions: [""],
@@ -458,7 +461,7 @@ export const ManageDeals = () => {
       </Card>
 
       {/* Add/Edit Deal Dialog */}
-      <Dialog open={openDialog} handler={handleCloseDialog} size="md">
+      <Dialog open={openDialog} handler={handleCloseDialog} size="lg">
         <DialogHeader>{currentDeal ? "Edit Deal" : "Add Deal"}</DialogHeader>
         <DialogBody className="h-[480px] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -856,9 +859,9 @@ export const ManageDeals = () => {
               <div className="flex items-center">
                 <Checkbox
                   color="blue"
-                  checked={formData.isHotDeal}
+                  checked={formData.isHotdeal}
                   onChange={() =>
-                    setFormData({ ...formData, isHotDeal: !formData.isHotDeal })
+                    setFormData({ ...formData, isHotdeal: !formData.isHotdeal })
                   }
                 />
                 <Typography>Hot Deal</Typography>
@@ -878,33 +881,52 @@ export const ManageDeals = () => {
               </div>
             </div>
 
-            <Typography variant="h6">iternatiy</Typography>
-            {formData.iternatiy.map((item, index) => (
-              <div key={index} className="mb-2 flex items-center gap-2">
-                <Input
-                  label={`Day ${index + 1}`}
-                  value={item}
-                  onChange={(e) => {
-                    const updated = [...formData.iternatiy];
-                    updated[index] = e.target.value;
-                    setFormData({ ...formData, iternatiy: updated });
-                  }}
-                  className="flex-1"
-                />
-                {formData.iternatiy.length > 1 && (
-                  <Button
-                    size="sm"
-                    color="red"
-                    onClick={() => {
-                      const updated = formData.iternatiy.filter(
-                        (_, i) => i !== index,
-                      );
-                      setFormData({ ...formData, iternatiy: updated });
+            <Typography variant="h6">itinerary</Typography>
+            {formData.itinerary.map((item, index) => (
+              <div key={index} className="mb-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    label={`Day ${index + 1} Title`}
+                    value={item.title}
+                    onChange={(e) => {
+                      const updated = [...formData.itinerary];
+                      updated[index] = {
+                        ...updated[index],
+                        title: e.target.value,
+                      };
+                      setFormData({ ...formData, itinerary: updated });
                     }}
-                  >
-                    Remove
-                  </Button>
-                )}
+                    className="flex-1"
+                  />
+                  {formData.itinerary.length > 1 && (
+                    <Button
+                      size="sm"
+                      color="red"
+                      onClick={() => {
+                        const updated = formData.itinerary.filter(
+                          (_, i) => i !== index,
+                        );
+                        setFormData({ ...formData, itinerary: updated });
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </div>
+
+                <Input
+                  label={`Day ${index + 1} Description`}
+                  value={item.description}
+                  onChange={(e) => {
+                    const updated = [...formData.itinerary];
+                    updated[index] = {
+                      ...updated[index],
+                      description: e.target.value,
+                    };
+                    setFormData({ ...formData, itinerary: updated });
+                  }}
+                  textarea
+                />
               </div>
             ))}
 
@@ -914,7 +936,10 @@ export const ManageDeals = () => {
               onClick={() =>
                 setFormData({
                   ...formData,
-                  iternatiy: [...formData.iternatiy, ""],
+                  itinerary: [
+                    ...formData.itinerary,
+                    { title: "", description: "" }, // ← new object
+                  ],
                 })
               }
             >
@@ -1115,7 +1140,7 @@ export const ManageDeals = () => {
       </Dialog>
 
       {/*View Deal Dialog */}
-      <Dialog open={openViewDialog} handler={handleCloseViewDialog} size="md">
+      <Dialog open={openViewDialog} handler={handleCloseViewDialog} size="lg">
         <DialogHeader className="flex items-start justify-between bg-white p-4">
           <Typography
             variant="h5"
@@ -1285,12 +1310,15 @@ export const ManageDeals = () => {
                   </Typography>
                 </CardHeader>
                 <CardBody className="p-4">
-                  {currentDeal.iternatiy && currentDeal.iternatiy.length > 0 ? (
-                    <ul className="list-disc pl-5 text-black">
-                      {currentDeal.iternatiy.map((item, index) => (
-                        <li key={index}>{item}</li>
+                  {currentDeal.itinerary && currentDeal.itinerary.length > 0 ? (
+                    <ol className="list-decimal space-y-2 pl-5 text-black">
+                      {currentDeal.itinerary.map((item, index) => (
+                        <li key={index}>
+                          <strong>{item.title}</strong>
+                          <p>{item.description}</p>
+                        </li>
                       ))}
-                    </ul>
+                    </ol>
                   ) : (
                     <Typography variant="paragraph" className="text-black">
                       No itinerary provided.
