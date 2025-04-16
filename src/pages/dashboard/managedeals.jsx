@@ -361,6 +361,14 @@ export const ManageDeals = () => {
     setExpandedSection(expandedSection === section ? null : section);
   };
 
+  const [expandedIndices, setExpandedIndices] = useState([]);
+
+  const toggleExpand = (index) => {
+    setExpandedIndices((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
+    );
+  };
+
   return (
     <div className="h-screen w-full overflow-hidden px-4 py-6">
       {alert.message && (
@@ -1351,99 +1359,129 @@ export const ManageDeals = () => {
                     Price Details
                   </Typography>
                 </CardHeader>
-                <CardBody className="space-y-4 p-4">
+
+                <CardBody className="space-y-6 p-4">
                   {currentDeal.prices && currentDeal.prices.length > 0 ? (
-                    currentDeal.prices.map((price, pIndex) => (
-                      <div
-                        key={pIndex}
-                        className="rounded border border-gray-300 p-3"
-                      >
-                        <Typography
-                          variant="subtitle1"
-                          className="text-deep-orange-500"
+                    currentDeal.prices.map((price, pIndex) => {
+                      const isExpanded = expandedIndices.includes(pIndex);
+                      return (
+                        <div
+                          key={pIndex}
+                          className="space-y-3 rounded-lg border border-gray-300 bg-white p-4"
                         >
-                          Price Entry {pIndex + 1}
-                        </Typography>
-                        <ul className="list-disc pl-5 text-black">
-                          <li>
-                            <strong>Country:</strong> {price.country || "N/A"}
-                          </li>
-                          <li>
-                            <strong>Airport:</strong> {price.airport || "N/A"}
-                          </li>
-                          <li>
-                            <strong>Hotel:</strong>{" "}
-                            {(price.hotel && price.hotel.name) || "N/A"}
-                          </li>
-                          <li>
-                            <strong>Start Date:</strong>{" "}
-                            {price.startdate
-                              ? new Date(price.startdate).toLocaleDateString()
-                              : "N/A"}
-                          </li>
-                          <li>
-                            <strong>End Date:</strong>{" "}
-                            {price.enddate
-                              ? new Date(price.enddate).toLocaleDateString()
-                              : "N/A"}
-                          </li>
-                          <li>
-                            <strong>Price:</strong> {price.price || "N/A"}
-                          </li>
-                        </ul>
-                        {price.flightDetails && (
-                          <>
-                            <Typography
-                              variant="subtitle2"
-                              className="mt-2 text-deep-orange-500"
+                          <Typography
+                            variant="subtitle1"
+                            className="text-deep-orange-500"
+                          >
+                            Price Entry {pIndex + 1}
+                          </Typography>
+
+                          {/* Summary View */}
+                          <div className="grid grid-cols-1 gap-3 text-sm text-black md:grid-cols-2">
+                            <div>
+                              <strong>Country:</strong> {price.country || "N/A"}
+                            </div>
+                            <div>
+                              <strong>Hotel:</strong>{" "}
+                              {(price.hotel && price.hotel.name) || "N/A"}
+                            </div>
+                            <div>
+                              <strong>Start Date:</strong>{" "}
+                              {price.startdate
+                                ? new Date(price.startdate).toLocaleDateString()
+                                : "N/A"}
+                            </div>
+                            <div>
+                              <strong>Airport:</strong> {price.airport || "N/A"}
+                            </div>
+                            <div>
+                              <strong>Price:</strong> {price.price || "N/A"}
+                            </div>
+                          </div>
+
+                          {/* View More / Less */}
+                          <div>
+                            <Button
+                              size="sm"
+                              variant="text"
+                              className="text-blue-600 underline"
+                              onClick={() => toggleExpand(pIndex)}
                             >
-                              Flight Details:
-                            </Typography>
-                            <ul className="list-disc pl-5 text-black">
-                              <li>
-                                <strong>Outbound Departure:</strong>{" "}
-                                {price.flightDetails.outbound.departureTime ||
-                                  "N/A"}
-                              </li>
-                              <li>
-                                <strong>Outbound Arrival:</strong>{" "}
-                                {price.flightDetails.outbound.arrivalTime ||
-                                  "N/A"}
-                              </li>
-                              <li>
-                                <strong>Outbound Airline:</strong>{" "}
-                                {price.flightDetails.outbound.airline || "N/A"}
-                              </li>
-                              <li>
-                                <strong>Outbound Flight Number:</strong>{" "}
-                                {price.flightDetails.outbound.flightNumber ||
-                                  "N/A"}
-                              </li>
-                              <li>
-                                <strong>Return Departure:</strong>{" "}
-                                {price.flightDetails.returnFlight
-                                  .departureTime || "N/A"}
-                              </li>
-                              <li>
-                                <strong>Return Arrival:</strong>{" "}
-                                {price.flightDetails.returnFlight.arrivalTime ||
-                                  "N/A"}
-                              </li>
-                              <li>
-                                <strong>Return Airline:</strong>{" "}
-                                {price.flightDetails.returnFlight.airline ||
-                                  "N/A"}
-                              </li>
-                              <li>
-                                <strong>Return Flight Number:</strong>{" "}
-                                {price.flightDetails.returnFlight
-                                  .flightNumber || "N/A"}
-                              </li>
-                            </ul>
-                          </>
-                        )}
-                      </div>
-                    ))
+                              {isExpanded ? "View Less" : "View More"}
+                            </Button>
+                          </div>
+
+                          {/* Expanded Details */}
+                          {isExpanded && (
+                            <div className="space-y-3 text-sm text-black">
+                              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                <div>
+                                  <strong>End Date:</strong>{" "}
+                                  {price.enddate
+                                    ? new Date(
+                                        price.enddate,
+                                      ).toLocaleDateString()
+                                    : "N/A"}
+                                </div>
+                              </div>
+
+                              {price.flightDetails && (
+                                <>
+                                  <Typography
+                                    variant="subtitle2"
+                                    className="mt-3 text-deep-orange-500"
+                                  >
+                                    Flight Details
+                                  </Typography>
+                                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                    <div>
+                                      <strong>Outbound Departure:</strong>{" "}
+                                      {price.flightDetails.outbound
+                                        .departureTime || "N/A"}
+                                    </div>
+                                    <div>
+                                      <strong>Outbound Arrival:</strong>{" "}
+                                      {price.flightDetails.outbound
+                                        .arrivalTime || "N/A"}
+                                    </div>
+                                    <div>
+                                      <strong>Outbound Airline:</strong>{" "}
+                                      {price.flightDetails.outbound.airline ||
+                                        "N/A"}
+                                    </div>
+                                    <div>
+                                      <strong>Outbound Flight Number:</strong>{" "}
+                                      {price.flightDetails.outbound
+                                        .flightNumber || "N/A"}
+                                    </div>
+                                    <div>
+                                      <strong>Return Departure:</strong>{" "}
+                                      {price.flightDetails.returnFlight
+                                        .departureTime || "N/A"}
+                                    </div>
+                                    <div>
+                                      <strong>Return Arrival:</strong>{" "}
+                                      {price.flightDetails.returnFlight
+                                        .arrivalTime || "N/A"}
+                                    </div>
+                                    <div>
+                                      <strong>Return Airline:</strong>{" "}
+                                      {price.flightDetails.returnFlight
+                                        .airline || "N/A"}
+                                    </div>
+                                    <div>
+                                      <strong>Return Flight Number:</strong>{" "}
+                                      {price.flightDetails.returnFlight
+                                        .flightNumber || "N/A"}
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
                   ) : (
                     <Typography variant="paragraph" className="text-black">
                       No price details available.

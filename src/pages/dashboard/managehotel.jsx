@@ -5,6 +5,8 @@ import {
   Card,
   Input,
   Dialog,
+  Radio,
+  Switch,
   DialogHeader,
   DialogBody,
   DialogFooter,
@@ -40,6 +42,36 @@ export function ManageHotel() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [hotelName, setHotelName] = useState("");
+  const [mode, setMode] = useState("manual");
+  const [inputValue, setInputValue] = useState(formData.locationId || "");
+
+  useEffect(() => {
+    setInputValue(formData.locationId || "");
+  }, [formData.locationId]);
+
+  const handleInputChange = (e) => {
+    const val = e.target.value;
+    setInputValue(val);
+
+    if (mode === "url") {
+      const match = val.match(/-d(\d+)/);
+      const extracted = match ? match[1] : "";
+      setFormData({ ...formData, locationId: extracted });
+    } else {
+      if (/^\d*$/.test(val)) {
+        setFormData({ ...formData, locationId: val });
+      }
+    }
+  };
+
+  const toggleMode = () => {
+    const newMode = mode === "manual" ? "url" : "manual";
+    setMode(newMode);
+    setInputValue(newMode === "manual" ? formData.locationId || "" : "");
+    if (newMode === "url") {
+      setFormData({ ...formData, locationId: "" });
+    }
+  };
 
   const handleAddImageUrl = () => {
     if (imageUrls.length < 6) {
@@ -285,14 +317,44 @@ export function ManageHotel() {
               }
               required
             />
-            <Input
+            {/* <Input
               label="Location ID"
               value={formData.locationId}
               onChange={(e) =>
                 setFormData({ ...formData, locationId: e.target.value })
               }
               required
-            />
+            /> */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-gray-700">
+                  Manual
+                </span>
+                <Switch
+                  id="custom-switch-component"
+                  checked={mode === "url"}
+                  onChange={toggleMode}
+                  ripple={false}
+                  className="h-full w-full checked:bg-blue-500"
+                  containerProps={{ className: "w-11 h-6" }}
+                  circleProps={{
+                    className: "before:hidden left-0.5 border-none",
+                  }}
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  From URL
+                </span>
+              </div>
+
+              <Input
+                label={
+                  mode === "url" ? "TripAdvisor URL" : "Manual Location ID"
+                }
+                value={inputValue}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
             <Input
               label="About"
               value={formData.about}
