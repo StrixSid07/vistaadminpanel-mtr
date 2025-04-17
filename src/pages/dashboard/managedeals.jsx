@@ -168,8 +168,14 @@ export const ManageDeals = () => {
             isHotdeal: deal.isHotdeal || false,
             isFeatured: deal.isFeatured || false,
             boardBasis: deal.boardBasis || "",
-            hotels: deal.hotels || [],
-            holidaycategories: deals.holidaycategories || [],
+            hotels: Array.isArray(deal.hotels)
+              ? deal.hotels.map((h) => (typeof h === "object" ? h._id : h))
+              : [],
+            holidaycategories: Array.isArray(deal.holidaycategories)
+              ? deal.holidaycategories.map((cat) =>
+                  typeof cat === "object" ? cat._id : cat,
+                )
+              : [],
             itinerary:
               deal.itinerary &&
               Array.isArray(deal.itinerary) &&
@@ -409,6 +415,7 @@ export const ManageDeals = () => {
               className="group p-4 shadow-md transition-colors duration-300 ease-in-out hover:bg-blue-50"
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                {/* Title + Flags & Categories */}
                 <div className="flex-1">
                   <Typography
                     variant="h5"
@@ -417,11 +424,61 @@ export const ManageDeals = () => {
                   >
                     {deal.title}
                   </Typography>
-                  <Typography className="mt-1 font-medium text-blue-500">
-                    {deal.description}
-                  </Typography>
+
+                  {/* Flags */}
+                  <div className="mt-2 flex items-center space-x-4">
+                    <div className="flex items-center gap-1">
+                      <Checkbox
+                        color="orange"
+                        checked={deal.isTopDeal}
+                        disabled
+                      />
+                      <Typography variant="small">Top Deal</Typography>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Checkbox color="red" checked={deal.isHotdeal} disabled />
+                      <Typography variant="small">Hot Deal</Typography>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Checkbox
+                        color="green"
+                        checked={deal.isFeatured}
+                        disabled
+                      />
+                      <Typography variant="small">Featured</Typography>
+                    </div>
+                  </div>
+
+                  {/* Categories */}
+                  <div className="mt-2">
+                    <Typography
+                      variant="subtitle2"
+                      className="font-bold text-deep-orange-300"
+                    >
+                      Categories:
+                    </Typography>
+                    {Array.isArray(deal.holidaycategories) &&
+                    deal.holidaycategories.length > 0 ? (
+                      <ul className="list-disc pl-6 text-black">
+                        {deal.holidaycategories.map((catItem, idx) => {
+                          const catId =
+                            typeof catItem === "object" ? catItem._id : catItem;
+                          const catObj = holidaycategories.find(
+                            (h) => h._id === catId,
+                          );
+                          const name = catObj ? catObj.name : catId;
+                          return <li key={idx}>{name}</li>;
+                        })}
+                      </ul>
+                    ) : (
+                      <Typography variant="paragraph" className="text-black">
+                        No categories selected.
+                      </Typography>
+                    )}
+                  </div>
                 </div>
 
+                {/* Action buttons (View/Edit/Delete) */}
                 <div className="flex items-center gap-4">
                   <Tooltip
                     content="View"
@@ -565,7 +622,7 @@ export const ManageDeals = () => {
             <Menu placement="bottom-start">
               <MenuHandler>
                 <Button
-                  varient="gradient"
+                  variant="gradient"
                   color="blue"
                   className="w-full text-left"
                 >
@@ -660,7 +717,7 @@ export const ManageDeals = () => {
                     onClick={(e) => e.preventDefault()} // Prevent dropdown from closing
                   >
                     <Checkbox
-                      color="blue"
+                      color="amber"
                       ripple={false}
                       containerProps={{ className: "p-0" }}
                       className="hover:before:content-none"
@@ -1396,6 +1453,70 @@ export const ManageDeals = () => {
                       {currentDeal.guests || "N/A"}
                     </Typography>
                   </div>
+                </CardBody>
+              </Card>
+
+              {/* Flags & Categories Card */}
+              <Card className="border border-blue-500 shadow-md">
+                <CardHeader color="blue" className="p-4">
+                  <Typography variant="h6" className="text-white">
+                    Flags & Categories
+                  </Typography>
+                </CardHeader>
+                <CardBody className="p-4">
+                  {/* Boolean flags */}
+                  <div className="mb-4 flex items-center space-x-6">
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        color="orange"
+                        checked={currentDeal.isTopDeal}
+                        disabled
+                      />
+                      <Typography variant="small">Top Deal</Typography>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        color="red"
+                        checked={currentDeal.isHotdeal}
+                        disabled
+                      />
+                      <Typography variant="small">Hot Deal</Typography>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        color="green"
+                        checked={currentDeal.isFeatured}
+                        disabled
+                      />
+                      <Typography variant="small">Featured</Typography>
+                    </div>
+                  </div>
+
+                  {/* Holiday categories list */}
+                  <Typography
+                    variant="subtitle2"
+                    className="mb-2 font-bold text-deep-orange-500"
+                  >
+                    Categories:
+                  </Typography>
+                  {Array.isArray(currentDeal.holidaycategories) &&
+                  currentDeal.holidaycategories.length > 0 ? (
+                    <ul className="list-disc pl-6 text-black">
+                      {currentDeal.holidaycategories.map((catItem, idx) => {
+                        const catId =
+                          typeof catItem === "object" ? catItem._id : catItem;
+                        const catObj = holidaycategories.find(
+                          (h) => h._id === catId,
+                        );
+                        const displayName = catObj ? catObj.name : catId;
+                        return <li key={idx}>{displayName}</li>;
+                      })}
+                    </ul>
+                  ) : (
+                    <Typography variant="paragraph" className="text-black">
+                      No categories selected.
+                    </Typography>
+                  )}
                 </CardBody>
               </Card>
 
