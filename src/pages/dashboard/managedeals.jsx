@@ -24,7 +24,6 @@ import {
   PencilSquareIcon,
   TrashIcon,
   EyeIcon,
-  EyeSlashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import axios from "@/utils/axiosInstance";
@@ -34,6 +33,7 @@ export const ManageDeals = () => {
   const [destinations, setDestinations] = useState([]);
   const [airports, setAirports] = useState([]);
   const [hotels, setHotels] = useState([]);
+  const [holidaycategories, setHolidayCategories] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [openViewDialog, setOpenViewDialog] = useState(false);
   const [currentDeal, setCurrentDeal] = useState(null);
@@ -52,6 +52,7 @@ export const ManageDeals = () => {
     isFeatured: false,
     boardBasis: "",
     hotels: [],
+    holidaycategories: [],
     itinerary: [{ title: "", description: "" }],
     whatsIncluded: [""],
     exclusiveAdditions: [""],
@@ -96,6 +97,7 @@ export const ManageDeals = () => {
     fetchDestinations();
     fetchAirports();
     fetchHotels();
+    fetchHolidays();
   }, []);
 
   const fetchDeals = async () => {
@@ -138,6 +140,16 @@ export const ManageDeals = () => {
     }
   };
 
+  const fetchHolidays = async () => {
+    try {
+      const response = await axios.get("/holidays/dropdown-holiday");
+      setHolidayCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching holidays:", error);
+      setAlert({ message: "Error fetching holidays", type: "red" });
+    }
+  };
+
   const handleOpenDialog = (deal = null) => {
     setCurrentDeal(deal);
     setFormData(
@@ -157,6 +169,7 @@ export const ManageDeals = () => {
             isFeatured: deal.isFeatured || false,
             boardBasis: deal.boardBasis || "",
             hotels: deal.hotels || [],
+            holidaycategories: deals.holidaycategories || [],
             itinerary:
               deal.itinerary &&
               Array.isArray(deal.itinerary) &&
@@ -240,6 +253,7 @@ export const ManageDeals = () => {
             isFeatured: false,
             boardBasis: "",
             hotels: [],
+            holidaycategories: [],
             images: [],
             itinerary: [{ title: "", description: "" }],
             whatsIncluded: [""],
@@ -547,6 +561,57 @@ export const ManageDeals = () => {
               ))}
             </Select>
 
+            <Typography variant="h6">Select Holidays Categories</Typography>
+            <Menu placement="bottom-start">
+              <MenuHandler>
+                <Button
+                  varient="gradient"
+                  color="blue"
+                  className="w-full text-left"
+                >
+                  {formData.holidaycategories.length > 0
+                    ? `${formData.holidaycategories.length} categorie(s) selected`
+                    : "Select Holidays Categories"}
+                </Button>
+              </MenuHandler>
+              <MenuList className="z-[100000] max-h-64 overflow-auto">
+                {holidaycategories.map((holidaycategorie) => (
+                  <MenuItem
+                    key={holidaycategorie._id}
+                    className="flex items-center gap-2"
+                    onClick={(e) => e.preventDefault()} // Prevent dropdown from closing
+                  >
+                    <Checkbox
+                      ripple={false}
+                      color="blue"
+                      containerProps={{ className: "p-0" }}
+                      className="hover:before:content-none"
+                      checked={formData.holidaycategories.includes(
+                        holidaycategorie._id,
+                      )}
+                      onChange={(e) => {
+                        e.stopPropagation(); // Prevent bubbling to MenuItem
+                        const isChecked = e.target.checked;
+                        const updatedHolidaysCategories = isChecked
+                          ? [
+                              ...formData.holidaycategories,
+                              holidaycategorie._id,
+                            ]
+                          : formData.holidaycategories.filter(
+                              (id) => id !== holidaycategorie._id,
+                            );
+                        setFormData({
+                          ...formData,
+                          holidaycategories: updatedHolidaysCategories,
+                        });
+                      }}
+                    />
+                    <span>{holidaycategorie.name}</span>
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
               <Input
                 label="Number of Days"
@@ -577,7 +642,11 @@ export const ManageDeals = () => {
             <Typography variant="h6">Select Hotels</Typography>
             <Menu placement="bottom-start">
               <MenuHandler>
-                <Button variant="outlined" className="w-full text-left">
+                <Button
+                  variant="gradient"
+                  color="amber"
+                  className="w-full text-left"
+                >
                   {formData.hotels.length > 0
                     ? `${formData.hotels.length} hotel(s) selected`
                     : "Select Hotels"}
@@ -592,6 +661,9 @@ export const ManageDeals = () => {
                   >
                     <Checkbox
                       color="blue"
+                      ripple={false}
+                      containerProps={{ className: "p-0" }}
+                      className="hover:before:content-none"
                       checked={formData.hotels.includes(hotel._id)}
                       onChange={(e) => {
                         e.stopPropagation(); // Prevent bubbling to MenuItem
@@ -867,7 +939,7 @@ export const ManageDeals = () => {
             <div className="grid grid-cols-3">
               <div className="flex items-center">
                 <Checkbox
-                  color="blue"
+                  color="orange"
                   checked={formData.isTopDeal}
                   onChange={() =>
                     setFormData({ ...formData, isTopDeal: !formData.isTopDeal })
@@ -877,7 +949,7 @@ export const ManageDeals = () => {
               </div>
               <div className="flex items-center">
                 <Checkbox
-                  color="blue"
+                  color="red"
                   checked={formData.isHotdeal}
                   onChange={() =>
                     setFormData({ ...formData, isHotdeal: !formData.isHotdeal })
@@ -887,7 +959,7 @@ export const ManageDeals = () => {
               </div>
               <div className="flex items-center">
                 <Checkbox
-                  color="blue"
+                  color="green"
                   checked={formData.isFeatured}
                   onChange={() =>
                     setFormData({

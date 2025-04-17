@@ -8,6 +8,7 @@ import {
   UserCircleIcon,
   UserIcon,
   SwatchIcon,
+  TagIcon,
   TableCellsIcon,
   InformationCircleIcon,
   ServerStackIcon,
@@ -25,6 +26,7 @@ import {
   ManageTerms,
   ManageDeals,
   ManageCarousel,
+  ManageHolidayCategories,
 } from "@/pages/dashboard";
 import { SignUp, LogIn } from "@/pages/auth";
 
@@ -71,6 +73,12 @@ export const routes = [
         name: "Manage Hotels",
         path: "/manage-hotel",
         element: <ManageHotel />,
+      },
+      {
+        icon: <TagIcon {...icon} />,
+        name: "Manage H Categories",
+        path: "/Manage-holiday-categories",
+        element: <ManageHolidayCategories />,
       },
       {
         icon: <MapPinIcon {...icon} />,
