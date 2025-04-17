@@ -407,6 +407,7 @@ export const ManageDeals = () => {
         </Button>
       </div>
 
+      {/* Main Screen Cards */}
       <Card className="h-[calc(100vh-150px)] overflow-y-auto rounded-xl p-4 shadow-lg scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
         <div className="space-y-6">
           {deals.map((deal) => (
