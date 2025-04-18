@@ -91,7 +91,7 @@ export const ManageDeals = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [dealName, setDealName] = useState("");
-
+  const [newImages, setNewImages] = useState([]);
   useEffect(() => {
     fetchDeals();
     fetchDestinations();
@@ -117,6 +117,23 @@ export const ManageDeals = () => {
     } catch (error) {
       console.error("Error fetching destinatinos:", error);
       setAlert({ message: "Error fetching destinatinos", type: "red" });
+    }
+  };
+const handleRemoveImage = async (indexToRemove, imageUrl) => {
+    try {
+      const dealId = formData._id; // adjust this as per your data
+      console.log("this is deal data", formData);
+      await axios.delete(`/deals/image/${dealId}`, {
+        data: { imageUrl },
+      });
+
+      // Optimistically update the UI
+      setFormData((prevData) => ({
+        ...prevData,
+        images: prevData.images.filter((_, index) => index !== indexToRemove),
+      }));
+    } catch (error) {
+      console.error("Error deleting image:", error);
     }
   };
 
@@ -152,9 +169,11 @@ export const ManageDeals = () => {
 
   const handleOpenDialog = (deal = null) => {
     setCurrentDeal(deal);
+    // console.log("thisis images", deal.images);
     setFormData(
       deal
         ? {
+            _id: deal._id,
             title: deal.title,
             description: deal.description,
             availableCountries: deal.availableCountries || [],
@@ -205,7 +224,7 @@ export const ManageDeals = () => {
                 : Array.isArray(deal.termsAndConditions)
                 ? deal.termsAndConditions
                 : [""],
-            images: [],
+            images: deal.images,
             tag: deal.tag,
             LowDeposite: deal.LowDeposite,
             prices:
@@ -1257,6 +1276,42 @@ export const ManageDeals = () => {
                 required
               />
             </div>
+            <Card className="mt-6 border border-blue-500 shadow-md">
+              <CardHeader color="blue" className="p-4">
+                <Typography variant="h6" className="text-white">
+                  Images
+                </Typography>
+              </CardHeader>
+              <CardBody className="p-4">
+                <div className="flex flex-wrap gap-2">
+                  {Array.isArray(formData.images) &&
+                  formData.images.length > 0 ? (
+                    formData.images.map((image, index) => (
+                      <div key={index} className="group relative h-20 w-20">
+                        <img
+                          src={image}
+                          alt={`Deal Image ${index + 1}`}
+                          className="h-full w-full rounded object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(index, image)}
+                          className="absolute right-0 top-0 flex h-5 w-5 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-red-600 text-xs text-white hover:bg-red-800"
+                          title="Remove Image"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <Typography variant="paragraph" className="text-black">
+                      No images available.
+                    </Typography>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+
             {/* Image Upload */}
             <Input
               type="file"
@@ -1264,18 +1319,18 @@ export const ManageDeals = () => {
               onChange={(e) => {
                 const files = Array.from(e.target.files);
 
-                if (files.length > 5) {
+                if (
+                  files.length + newImages.length + formData.images.length >
+                  5
+                ) {
                   alert("You can only upload up to 5 images.");
                   e.target.value = ""; // reset the input
                   return;
                 }
-
-                setFormData({
-                  ...formData,
-                  images: files,
-                });
+                setNewImages((prevImages) => [...prevImages, ...files]);
               }}
             />
+
           </form>
         </DialogBody>
         <DialogFooter>
