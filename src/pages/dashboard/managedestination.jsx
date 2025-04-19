@@ -32,8 +32,10 @@ export function ManageDestination() {
   const [formData, setFormData] = useState({
     name: "",
     isPopular: false,
-    imageUrls: "",
+    imageFile: null,
+    imagePreview: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", type: "" });
 
@@ -45,6 +47,7 @@ export function ManageDestination() {
     try {
       const response = await axios.get("/destinations/destinations");
       setDestinations(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error("Error fetching destinations:", error);
       setAlert({ message: "Error fetching destinations", type: "red" });
@@ -60,6 +63,27 @@ export function ManageDestination() {
     setPreviewImage(null);
     setOpenImageDialog(false);
   };
+  const handleDeleteImage = async () => {
+    if (!currentDestination) return;
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this image?",
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`/destinations/image/${currentDestination._id}`);
+      setFormData({
+        ...formData,
+        imagePreview: "",
+        imageFile: null,
+      });
+      setAlert({ message: "Image deleted successfully!", type: "green" });
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      setAlert({ message: "Failed to delete image", type: "red" });
+    }
+  };
 
   const handleOpenDialog = (destination = null) => {
     setCurrentDestination(destination);
@@ -68,10 +92,17 @@ export function ManageDestination() {
         ? {
             name: destination.name,
             isPopular: destination.isPopular,
-            imageUrls: destination.image,
+            imageFile: null,
+            imagePreview: destination.image,
           }
-        : { name: "", isPopular: false, imageUrls: "" },
+        : {
+            name: "",
+            isPopular: false,
+            imageFile: null,
+            imagePreview: "",
+          },
     );
+
     setOpenDialog(true);
   };
 
@@ -84,17 +115,30 @@ export function ManageDestination() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
+      const data = new FormData();
+      data.append("name", formData.name);
+      data.append("isPopular", formData.isPopular);
+      if (formData.imageFile) {
+        data.append("images", formData.imageFile);
+      }
+
       if (currentDestination) {
-        await axios.put(`/destinations/${currentDestination._id}`, formData);
+        await axios.put(`/destinations/${currentDestination._id}`, data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         setAlert({
           message: "Destination updated successfully!",
           type: "green",
         });
       } else {
-        await axios.post("/destinations", formData);
+        await axios.post("/destinations", data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         setAlert({ message: "Destination added successfully!", type: "green" });
       }
+
       fetchDestinations();
       handleCloseDialog();
     } catch (error) {
@@ -146,7 +190,7 @@ export function ManageDestination() {
         </Button>
       </div>
 
-      <Card className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200 h-[calc(100vh-150px)] overflow-y-auto rounded-xl p-4 shadow-lg">
+      <Card className="h-[calc(100vh-150px)] overflow-y-auto rounded-xl p-4 shadow-lg scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
         <div className="space-y-6">
           {destinations.map((destination) => (
             <Card
@@ -247,14 +291,49 @@ export function ManageDestination() {
               }
               required
             />
-            <Input
-              label="Image URL"
-              value={formData.imageUrls}
-              onChange={(e) =>
-                setFormData({ ...formData, imageUrls: e.target.value })
-              }
-              required
-            />
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Upload Image
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setFormData({
+                      ...formData,
+                      imageFile: file,
+                      imagePreview: URL.createObjectURL(file),
+                    });
+                  }
+                }}
+                required={!currentDestination} // Required only for adding new
+                disabled={currentDestination?.image && !formData.imageFile}
+                className="block w-full text-sm text-gray-900 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-600 hover:file:bg-blue-100"
+              />
+            </div>
+
+            {formData.imagePreview && (
+              <div className="relative mt-3 w-full">
+                <img
+                  src={formData.imagePreview}
+                  alt="Preview"
+                  className="h-40 w-full rounded object-cover"
+                />
+                {/* Delete Icon */}
+                {currentDestination && (
+                  <button
+                    type="button"
+                    onClick={handleDeleteImage}
+                    className="absolute right-1 top-1 rounded-full bg-red-600 p-1 text-white hover:bg-red-700"
+                  >
+                    ❌
+                  </button>
+                )}
+              </div>
+            )}
+
             <label className="flex items-center gap-2 pt-2 text-sm text-gray-700">
               <Checkbox
                 checked={formData.isPopular}

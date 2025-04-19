@@ -31,6 +31,8 @@ import axios from "@/utils/axiosInstance";
 export const ManageDeals = () => {
   const [deals, setDeals] = useState([]);
   const [destinations, setDestinations] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]); // for showing all images
+
   const [airports, setAirports] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [holidaycategories, setHolidayCategories] = useState([]);
@@ -91,7 +93,7 @@ export const ManageDeals = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [dealName, setDealName] = useState("");
-  const [newImages, setNewImages] = useState([]);
+
   useEffect(() => {
     fetchDeals();
     fetchDestinations();
@@ -117,23 +119,6 @@ export const ManageDeals = () => {
     } catch (error) {
       console.error("Error fetching destinatinos:", error);
       setAlert({ message: "Error fetching destinatinos", type: "red" });
-    }
-  };
-  const handleRemoveImage = async (indexToRemove, imageUrl) => {
-    try {
-      const dealId = formData._id; // adjust this as per your data
-      console.log("this is deal data", formData);
-      await axios.delete(`/deals/image/${dealId}`, {
-        data: { imageUrl },
-      });
-
-      // Optimistically update the UI
-      setFormData((prevData) => ({
-        ...prevData,
-        images: prevData.images.filter((_, index) => index !== indexToRemove),
-      }));
-    } catch (error) {
-      console.error("Error deleting image:", error);
     }
   };
 
@@ -330,7 +315,7 @@ export const ManageDeals = () => {
     setOpenViewDialog(false);
     setCurrentDeal(null);
   };
-
+  const [newImages, setNewImages] = useState([]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.availableCountries.length === 0) {
@@ -344,9 +329,9 @@ export const ManageDeals = () => {
     setLoading(true);
     const formDataToSubmit = new FormData();
     formDataToSubmit.append("data", JSON.stringify(formData));
-    if (formData.images && formData.images.length > 0) {
-      for (let i = 0; i < formData.images.length; i++) {
-        formDataToSubmit.append("images", formData.images[i]);
+    if (newImages && newImages.length > 0) {
+      for (let i = 0; i < newImages.length; i++) {
+        formDataToSubmit.append("images", newImages[i]);
       }
     }
 
@@ -373,6 +358,24 @@ export const ManageDeals = () => {
       setAlert({ message: "Error saving deal", type: "red" });
     } finally {
       setLoading(false);
+    }
+  };
+  const handleRemoveImage = async (indexToRemove, imageUrl) => {
+    try {
+      const dealId = formData._id; // adjust this as per your data
+      console.log("this is deal data", formData);
+      await axios.delete(`/deals/image/${dealId}`, {
+        data: { imageUrl },
+      });
+
+      // Optimistically update the UI
+      setFormData((prevData) => ({
+        ...prevData,
+        images: prevData.images.filter((_, index) => index !== indexToRemove),
+      }));
+      fetchDeals();
+    } catch (error) {
+      console.error("Error deleting image:", error);
     }
   };
 
@@ -1276,8 +1279,8 @@ export const ManageDeals = () => {
                 required
               />
             </div>
-            <Card className="border border-blue-500 shadow-md">
-              <CardHeader floated={false} color="blue" className="p-2">
+            <Card className="mt-6 border border-blue-500 shadow-md">
+              <CardHeader color="blue" className="p-4">
                 <Typography variant="h6" className="text-white">
                   Images
                 </Typography>
@@ -1315,7 +1318,6 @@ export const ManageDeals = () => {
             {/* Image Upload */}
             <Input
               type="file"
-              label="Select your images"
               multiple
               onChange={(e) => {
                 const files = Array.from(e.target.files);
