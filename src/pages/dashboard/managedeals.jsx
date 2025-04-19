@@ -119,7 +119,7 @@ export const ManageDeals = () => {
       setAlert({ message: "Error fetching destinatinos", type: "red" });
     }
   };
-const handleRemoveImage = async (indexToRemove, imageUrl) => {
+  const handleRemoveImage = async (indexToRemove, imageUrl) => {
     try {
       const dealId = formData._id; // adjust this as per your data
       console.log("this is deal data", formData);
@@ -1276,8 +1276,8 @@ const handleRemoveImage = async (indexToRemove, imageUrl) => {
                 required
               />
             </div>
-            <Card className="mt-6 border border-blue-500 shadow-md">
-              <CardHeader color="blue" className="p-4">
+            <Card className="border border-blue-500 shadow-md">
+              <CardHeader floated={false} color="blue" className="p-2">
                 <Typography variant="h6" className="text-white">
                   Images
                 </Typography>
@@ -1315,6 +1315,7 @@ const handleRemoveImage = async (indexToRemove, imageUrl) => {
             {/* Image Upload */}
             <Input
               type="file"
+              label="Select your images"
               multiple
               onChange={(e) => {
                 const files = Array.from(e.target.files);
@@ -1330,7 +1331,6 @@ const handleRemoveImage = async (indexToRemove, imageUrl) => {
                 setNewImages((prevImages) => [...prevImages, ...files]);
               }}
             />
-
           </form>
         </DialogBody>
         <DialogFooter>
