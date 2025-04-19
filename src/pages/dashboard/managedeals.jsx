@@ -1280,7 +1280,7 @@ export const ManageDeals = () => {
               />
             </div>
             <Card className="mt-6 border border-blue-500 shadow-md">
-              <CardHeader color="blue" className="p-4">
+              <CardHeader floated={false} color="blue" className="p-4">
                 <Typography variant="h6" className="text-white">
                   Images
                 </Typography>
@@ -1319,6 +1319,7 @@ export const ManageDeals = () => {
             <Input
               type="file"
               multiple
+              label="Choose Image"
               onChange={(e) => {
                 const files = Array.from(e.target.files);
 
