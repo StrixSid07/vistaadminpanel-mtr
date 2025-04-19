@@ -315,7 +315,7 @@ export function ManageDestination() {
             </div>
 
             {formData.imagePreview && (
-              <div className="relative mt-3 w-full">
+              <div className="relative mt-3 w-full p-2">
                 <img
                   src={formData.imagePreview}
                   alt="Preview"
@@ -326,7 +326,7 @@ export function ManageDestination() {
                   <button
                     type="button"
                     onClick={handleDeleteImage}
-                    className="absolute right-1 top-1 rounded-full bg-red-600 p-1 text-white hover:bg-red-700"
+                    className="absolute right-0 top-0 rounded-full bg-blue-100 p-1 text-white hover:bg-red-100"
                   >
                     ❌
                   </button>
