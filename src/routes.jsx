@@ -29,6 +29,7 @@ import {
   ManageHolidayCategories,
 } from "@/pages/dashboard";
 import { SignUp, LogIn } from "@/pages/auth";
+import ManageBlog from "./pages/dashboard/manageblogs";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -85,6 +86,12 @@ export const routes = [
         name: "Manage Destination",
         path: "/manage-destination",
         element: <ManageDestination />,
+      },
+      {
+        icon: <MapPinIcon {...icon} />,
+        name: "Manage Blog",
+        path: "/manage-blog",
+        element: <ManageBlog />,
       },
       {
         icon: <SwatchIcon {...icon} />,
