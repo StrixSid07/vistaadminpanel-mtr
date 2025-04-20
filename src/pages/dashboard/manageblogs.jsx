@@ -188,7 +188,7 @@ export function ManageBlog() {
 
       <div className="mb-4 flex justify-end">
         <Button onClick={() => handleOpenDialog()} color="blue">
-          Add Blog
+          Add Blogs
         </Button>
       </div>
 
