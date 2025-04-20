@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import {
   Typography,
   Button,
+  CardHeader,
+  CardBody,
   Card,
   Input,
   Dialog,
@@ -29,6 +31,7 @@ export function ManageHotel() {
   const [openViewDialog, setOpenViewDialog] = useState(false); // State for view dialog
   const [currentHotel, setCurrentHotel] = useState(null);
   const [formData, setFormData] = useState({
+    _id: "",
     name: "",
     location: "",
     locationId: "",
@@ -90,7 +93,23 @@ export function ManageHotel() {
     const updatedUrls = imageUrls.filter((_, i) => i !== index); // Remove the URL at the specified index
     setImageUrls(updatedUrls);
   };
+  const handleRemoveImage = async (indexToRemove, imageUrl) => {
+    try {
+      const HotelId = formData._id; // adjust this as per your data
+      console.log("this is deal data", formData);
+      await axios.delete(`/hotels/image/${HotelId}`, {
+        data: { imageUrl },
+      });
 
+      // Optimistically update the UI
+      setFormData((prevData) => ({
+        ...prevData,
+        images: prevData.images.filter((_, index) => index !== indexToRemove),
+      }));
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
+  };
   useEffect(() => {
     fetchHotels();
   }, []);
@@ -110,6 +129,7 @@ export function ManageHotel() {
     setFormData(
       hotel
         ? {
+            _id: hotel._id,
             name: hotel.name,
             location: hotel.location,
             locationId: hotel.locationId,
@@ -147,20 +167,32 @@ export function ManageHotel() {
     setOpenViewDialog(false);
     setCurrentHotel(null);
   };
-
+  const [newImages, setNewImages] = useState([]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const dataToSubmit = {
-        ...formData,
-        images: imageUrls.filter((url) => url.trim() !== ""), // Filter out empty URLs
-      };
+      console.log(formData);
+      const formDataToSubmit = new FormData();
+      formDataToSubmit.append("data", JSON.stringify(formData));
+      if (newImages && newImages.length > 0) {
+        for (let i = 0; i < newImages.length; i++) {
+          formDataToSubmit.append("images", newImages[i]);
+        }
+      }
       if (currentHotel) {
-        await axios.put(`/hotels/${currentHotel._id}`, dataToSubmit);
+        await axios.put(`/hotels/${currentHotel._id}`, formDataToSubmit, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         setAlert({ message: "Hotel updated successfully!", type: "green" });
       } else {
-        await axios.post("/hotels", dataToSubmit);
+        await axios.post("/hotels", formDataToSubmit, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         setAlert({ message: "Hotel added successfully!", type: "green" });
       }
       fetchHotels();
@@ -391,7 +423,6 @@ export function ManageHotel() {
                 )}
               </div>
             ))}
-
             <Button
               size="sm"
               color="blue"
@@ -414,40 +445,61 @@ export function ManageHotel() {
                 })
               }
             />
-            <div>
-              <Typography variant="h6">Images</Typography>
-              {imageUrls.map((url, index) => (
-                <div
-                  key={index}
-                  className="mt-2 flex items-center justify-center space-x-2"
-                >
-                  <Input
-                    label={`Image URL ${index + 1}`}
-                    value={url}
-                    onChange={(e) =>
-                      handleImageUrlChange(index, e.target.value)
-                    }
-                    className="flex-1"
-                  />
-                  <Button
-                    color="red"
-                    onClick={() => handleRemoveImageUrl(index)}
-                    variant="text"
-                    className="p-2"
-                  >
-                    Remove
-                  </Button>
-                </div>
-              ))}
-              <Button
-                color="blue"
-                onClick={handleAddImageUrl}
-                className="mt-2"
-                disabled={imageUrls.length >= 6}
-              >
-                Add Another Image URL
-              </Button>
-            </div>
+            {currentHotel && (
+              <Card className="mt-6 border border-blue-500 shadow-md">
+                <CardHeader color="blue" className="p-4">
+                  <Typography variant="h6" className="text-white">
+                    Images
+                  </Typography>
+                </CardHeader>
+                <CardBody className="p-4">
+                  <div className="flex flex-wrap gap-2">
+                    {Array.isArray(formData.images) &&
+                    formData.images.length > 0 ? (
+                      formData.images.map((image, index) => (
+                        <div key={index} className="group relative h-20 w-20">
+                          <img
+                            src={image}
+                            alt={`Hotel Image ${index + 1}`}
+                            className="h-full w-full rounded object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(index, image)}
+                            className="absolute right-0 top-0 flex h-5 w-5 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-red-600 text-xs text-white hover:bg-red-800"
+                            title="Remove Image"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <Typography variant="paragraph" className="text-black">
+                        No images available.
+                      </Typography>
+                    )}
+                  </div>
+                </CardBody>
+              </Card>
+            )}
+            {/* Image Upload */}
+            <Input
+              type="file"
+              multiple
+              onChange={(e) => {
+                const files = Array.from(e.target.files);
+
+                if (
+                  files.length + newImages.length + formData.images.length >
+                  5
+                ) {
+                  alert("You can only upload up to 5 images.");
+                  e.target.value = ""; // reset the input
+                  return;
+                }
+                setNewImages((prevImages) => [...prevImages, ...files]);
+              }}
+            />
           </form>
         </DialogBody>
         <DialogFooter>
