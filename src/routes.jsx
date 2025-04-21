@@ -9,6 +9,8 @@ import {
   UserIcon,
   SwatchIcon,
   TagIcon,
+  NewspaperIcon,
+  CreditCardIcon,
   TableCellsIcon,
   InformationCircleIcon,
   ServerStackIcon,
@@ -27,9 +29,10 @@ import {
   ManageDeals,
   ManageCarousel,
   ManageHolidayCategories,
+  ManageBlog,
 } from "@/pages/dashboard";
 import { SignUp, LogIn } from "@/pages/auth";
-import ManageBlog from "./pages/dashboard/manageblogs";
+import ManageNewsletter from "./pages/dashboard/managenewslatter";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -88,7 +91,13 @@ export const routes = [
         element: <ManageDestination />,
       },
       {
-        icon: <MapPinIcon {...icon} />,
+        icon: <NewspaperIcon {...icon} />,
+        name: "Manage Newslatter",
+        path: "/manage-newslatter",
+        element: <ManageNewsletter />,
+      },
+      {
+        icon: <CreditCardIcon {...icon} />,
         name: "Manage Blog",
         path: "/manage-blog",
         element: <ManageBlog />,
