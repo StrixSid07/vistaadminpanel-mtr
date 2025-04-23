@@ -410,6 +410,32 @@ export const ManageDeals = () => {
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
   };
+const today = new Date();
+const minStartDate = new Date(today);
+minStartDate.setDate(today.getDate() + 2); // 2 days after today
+  const minStartStr = minStartDate.toISOString().split("T")[0];
+  const validateDateRange = (price, days) => {
+  if (!price.startdate || !price.enddate || !days) return;
+
+  const start = new Date(price.startdate);
+  const end = new Date(price.enddate);
+
+  if (end < start) {
+    window.alert("End date cannot be before start date.");
+    return;
+  }
+
+  const actualDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+  const enteredDays = parseInt(days, 10);
+
+  if (enteredDays !== actualDays) {
+     window.alert(
+      enteredDays < actualDays
+        ? `You entered fewer days (${enteredDays}) than the actual range (${actualDays}).`
+        : `You entered more days (${enteredDays}) than the actual range (${actualDays}).`
+    );
+  }
+};
 
   return (
     <div className="h-screen w-full overflow-hidden px-4 py-6">
@@ -825,22 +851,34 @@ export const ManageDeals = () => {
                   <Input
                     label="Start Date"
                     type="date"
+                     min={minStartStr}
                     value={price.startdate}
                     onChange={(e) => {
                       const updatedPrices = [...formData.prices];
                       updatedPrices[index].startdate = e.target.value;
+                       if (
+      updatedPrices[index].enddate &&
+      new Date(updatedPrices[index].enddate) < new Date(e.target.value)
+    ) {
+      updatedPrices[index].enddate = e.target.value;
+    }
                       setFormData({ ...formData, prices: updatedPrices });
+                       validateDateRange(updatedPrices[index], formData.days);
+
                     }}
                     required
                   />
                   <Input
                     label="End Date"
                     type="date"
+                    min={price.startdate || minStartStr} // Prevent end date before start
                     value={price.enddate}
                     onChange={(e) => {
                       const updatedPrices = [...formData.prices];
                       updatedPrices[index].enddate = e.target.value;
                       setFormData({ ...formData, prices: updatedPrices });
+                       validateDateRange(updatedPrices[index], formData.days);
+
                     }}
                     required
                   />
