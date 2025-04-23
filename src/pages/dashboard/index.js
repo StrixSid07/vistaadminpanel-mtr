@@ -12,3 +12,4 @@ export * from "@/pages/dashboard/managecarousel";
 export * from "@/pages/dashboard/manageholidaycategorie";
 export * from "@/pages/dashboard/manageblogs";
 export * from "@/pages/dashboard/managenewslatter";
+export * from "@/pages/dashboard/managebooking";

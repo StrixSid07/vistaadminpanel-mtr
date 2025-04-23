@@ -12,6 +12,7 @@ import {
   Option,
   Alert,
   Tooltip,
+  Switch,
 } from "@material-tailwind/react";
 import {
   PencilSquareIcon,
@@ -37,6 +38,7 @@ export function ManageUsers() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [userName, setUserName] = useState("");
+  const [showAdmins, setShowAdmins] = useState(true); // true = show admins, false = show users
 
   useEffect(() => {
     fetchUsers();
@@ -131,91 +133,115 @@ export function ManageUsers() {
         </Alert>
       )}
 
-      <div className="mb-4 flex justify-end">
+      <div className="mb-4 flex flex-col items-end gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <Typography color="blue-gray" className="font-medium">
+            {showAdmins ? "Showing Admins" : "Showing Users"}
+          </Typography>
+          <Switch
+            checked={showAdmins}
+            onChange={() => setShowAdmins(!showAdmins)}
+            id="custom-switch-component"
+            ripple={false}
+            className="h-full w-full checked:bg-blue-500"
+            containerProps={{
+              className: "w-11 h-6",
+            }}
+            circleProps={{
+              className: "before:hidden left-0.5 border-none",
+            }}
+          />
+        </div>
         <Button onClick={() => handleOpenDialog()} color="blue">
           Add User
         </Button>
       </div>
 
-      <Card className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200 h-[calc(100vh-150px)] overflow-y-auto rounded-xl p-4 shadow-lg">
+      <Card className="h-[calc(100vh-150px)] overflow-y-auto rounded-xl p-4 shadow-lg scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
         <div className="space-y-6">
-          {users.map((user) => (
-            <Card
-              key={user._id}
-              className="group p-4 shadow-md transition-colors duration-300 ease-in-out hover:bg-blue-50"
-            >
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex-1">
-                  <Typography
-                    variant="h5"
-                    color="deep-orange"
-                    className="flex items-center justify-start gap-2"
-                  >
-                    <UserCircleIcon
-                      strokeWidth={2}
-                      className="h-5 w-5 text-deep-orange-600"
-                    />
-                    {user.name}
-                  </Typography>
-                  <Typography className="mt-1 flex items-center justify-start gap-2 font-medium text-blue-500">
-                    <EnvelopeIcon
-                      strokeWidth={2}
-                      className="h-5 w-5 text-blue-600"
-                    />
-                    {user.email}
-                  </Typography>
-                  <Typography
-                    className={`mt-1 flex items-center justify-start gap-2 font-medium ${
-                      user.role === "admin" ? "text-green-500" : "text-gray-500"
-                    }`}
-                  >
-                    <Cog6ToothIcon strokeWidth={2} className="h-5 w-5" />
-                    {user.role}
-                  </Typography>
-                </div>
+          {users
+            .filter((user) =>
+              showAdmins ? user.role === "admin" : user.role === "user",
+            )
+            .map((user) => (
+              <Card
+                key={user._id}
+                className="group p-4 shadow-md transition-colors duration-300 ease-in-out hover:bg-blue-50"
+              >
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex-1">
+                    <Typography
+                      variant="h5"
+                      color="deep-orange"
+                      className="flex items-center justify-start gap-2"
+                    >
+                      <UserCircleIcon
+                        strokeWidth={2}
+                        className="h-5 w-5 text-deep-orange-600"
+                      />
+                      {user.name}
+                    </Typography>
+                    <Typography className="mt-1 flex items-center justify-start gap-2 font-medium text-blue-500">
+                      <EnvelopeIcon
+                        strokeWidth={2}
+                        className="h-5 w-5 text-blue-600"
+                      />
+                      {user.email}
+                    </Typography>
+                    <Typography
+                      className={`mt-1 flex items-center justify-start gap-2 font-medium ${
+                        user.role === "admin"
+                          ? "text-green-500"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      <Cog6ToothIcon strokeWidth={2} className="h-5 w-5" />
+                      {user.role}
+                    </Typography>
+                  </div>
 
-                <div className="flex items-center gap-4">
-                  <Tooltip
-                    content="Edit"
-                    placement="top"
-                    className="font-medium text-green-600"
-                    animate={{
-                      mount: { scale: 1, y: 0 },
-                      unmount: { scale: 0, y: 25 },
-                    }}
-                  >
-                    <Button
-                      variant="text"
-                      color="green"
-                      onClick={() => handleOpenDialog(user)}
-                      className="p-2"
+                  <div className="flex items-center gap-4">
+                    <Tooltip
+                      content="Edit"
+                      placement="top"
+                      className="font-medium text-green-600"
+                      animate={{
+                        mount: { scale: 1, y: 0 },
+                        unmount: { scale: 0, y: 25 },
+                      }}
                     >
-                      <PencilSquareIcon className="h-5 w-5" />
-                    </Button>
-                  </Tooltip>
-                  <Tooltip
-                    content="Delete"
-                    placement="top"
-                    className="font-medium text-red-500"
-                    color="red"
-                    animate={{
-                      mount: { scale: 1, y: 0 },
-                      unmount: { scale: 0, y: 25 },
-                    }}
-                  >
-                    <Button
-                      variant="text"
+                      <Button
+                        variant="text"
+                        color="green"
+                        onClick={() => handleOpenDialog(user)}
+                        className="p-2"
+                      >
+                        <PencilSquareIcon className="h-5 w-5" />
+                      </Button>
+                    </Tooltip>
+                    <Tooltip
+                      content="Delete"
+                      placement="top"
+                      className="font-medium text-red-500"
                       color="red"
-                      onClick={() => confirmDelete(user._id, user.name)}
-                      className="p-2"
+                      animate={{
+                        mount: { scale: 1, y: 0 },
+                        unmount: { scale: 0, y: 25 },
+                      }}
                     >
-                      <TrashIcon className="h-5 w-5" />
-                    </Button>
-                  </Tooltip>
+                      <Button
+                        variant="text"
+                        color="red"
+                        onClick={() => confirmDelete(user._id, user.name)}
+                        className="p-2"
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </Button>
+                    </Tooltip>
+                  </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            ))}
         </div>
       </Card>
 

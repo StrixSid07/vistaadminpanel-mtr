@@ -15,6 +15,7 @@ import {
   InformationCircleIcon,
   ServerStackIcon,
   RectangleStackIcon,
+  TicketIcon,
 } from "@heroicons/react/24/solid";
 import {
   Home,
@@ -30,6 +31,7 @@ import {
   ManageCarousel,
   ManageHolidayCategories,
   ManageBlog,
+  ManageBooking,
 } from "@/pages/dashboard";
 import { SignUp, LogIn } from "@/pages/auth";
 import ManageNewsletter from "./pages/dashboard/managenewslatter";
@@ -71,6 +73,12 @@ export const routes = [
         name: "Manage Users",
         path: "/manage-users",
         element: <ManageUsers />,
+      },
+      {
+        icon: <TicketIcon {...icon} />,
+        name: "Manage Booking",
+        path: "/manage-booking",
+        element: <ManageBooking />,
       },
       {
         icon: <HomeModernIcon {...icon} />,

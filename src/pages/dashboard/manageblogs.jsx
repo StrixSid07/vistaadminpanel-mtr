@@ -18,8 +18,8 @@ import {
   MapPinIcon,
 } from "@heroicons/react/24/outline";
 import axios from "@/utils/axiosInstance";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // Quill CSS
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // Quill CSS
 export function ManageBlog() {
   const [blogs, setblogs] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
@@ -315,7 +315,7 @@ export function ManageBlog() {
                   <button
                     type="button"
                     onClick={handleDeleteImage}
-                    className="absolute right-1 top-1 rounded-full bg-red-600 p-1 text-white hover:bg-red-700"
+                    className="absolute right-1 top-1 rounded-full bg-white/60 p-1 text-white hover:bg-red-100"
                   >
                     ❌
                   </button>
