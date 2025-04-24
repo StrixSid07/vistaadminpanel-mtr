@@ -278,8 +278,17 @@ export function ManageDestination() {
       </Card>
 
       <Dialog open={openDialog} handler={handleCloseDialog} size="md">
-        <DialogHeader>
+        <DialogHeader className="flex items-center justify-between">
           {currentDestination ? "Edit Destination" : "Add Destination"}
+          {alert.message && (
+            <Alert
+              color={alert.type}
+              onClose={() => setAlert({ message: "", type: "" })}
+              className="mb-4 max-w-xl md:max-w-4xl"
+            >
+              {alert.message}
+            </Alert>
+          )}
         </DialogHeader>
         <DialogBody>
           <form onSubmit={handleSubmit} className="space-y-4">

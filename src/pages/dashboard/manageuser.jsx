@@ -246,7 +246,18 @@ export function ManageUsers() {
       </Card>
 
       <Dialog open={openDialog} handler={handleCloseDialog} size="md">
-        <DialogHeader>{currentUser ? "Edit User" : "Add User"}</DialogHeader>
+        <DialogHeader className="flex items-center justify-between">
+          {currentUser ? "Edit User" : "Add User"}{" "}
+          {alert.message && (
+            <Alert
+              color={alert.type}
+              onClose={() => setAlert({ message: "", type: "" })}
+              className="mb-4 max-w-xl md:max-w-4xl"
+            >
+              {alert.message}
+            </Alert>
+          )}
+        </DialogHeader>
         <DialogBody>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input

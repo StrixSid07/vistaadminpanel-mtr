@@ -18,7 +18,7 @@ function App() {
         path="*"
         element={
           <PrivateRoute>
-            <Navigate to="/dashboard/home" replace />
+            <Navigate to="/dashboard/manage-booking" replace />
           </PrivateRoute>
         }
       />

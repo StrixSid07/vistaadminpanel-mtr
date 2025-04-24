@@ -750,8 +750,17 @@ export function ManageBooking() {
 
       {/* Add/Edit Booking Dialog */}
       <Dialog open={openDialog} handler={handleCloseDialog} size="md">
-        <DialogHeader>
+        <DialogHeader className="flex items-center justify-between">
           {currentBooking ? "Edit Booking" : "Create Booking"}
+          {alert.message && (
+            <Alert
+              color={alert.type}
+              onClose={() => setAlert({ message: "", type: "" })}
+              className="mb-4 max-w-xl md:max-w-4xl"
+            >
+              {alert.message}
+            </Alert>
+          )}
         </DialogHeader>
         <DialogBody className="h-[480px] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
           <form onSubmit={handleSubmit} className="space-y-4">

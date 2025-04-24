@@ -146,12 +146,12 @@ export const routes = [
         path: "/sign-in",
         element: <LogIn />,
       },
-      {
-        icon: <RectangleStackIcon {...icon} />,
-        name: "sign up",
-        path: "/sign-up",
-        element: <SignUp />,
-      },
+      // {
+      //   icon: <RectangleStackIcon {...icon} />,
+      //   name: "sign up",
+      //   path: "/sign-up",
+      //   element: <SignUp />,
+      // },
     ],
   },
 ];

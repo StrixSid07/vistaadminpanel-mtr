@@ -181,7 +181,7 @@ export function ManageFaqs() {
         </Button>
       </div>
 
-      <Card className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200 h-[calc(100vh-150px)] overflow-y-auto rounded-xl p-4 shadow-lg">
+      <Card className="h-[calc(100vh-150px)] overflow-y-auto rounded-xl p-4 shadow-lg scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
         <div className="space-y-6">
           {faqs.map((faq) => (
             <Card
@@ -248,8 +248,19 @@ export function ManageFaqs() {
 
       {/* Add/Edit FAQ Dialog */}
       <Dialog open={openDialog} handler={handleCloseDialog} size="md">
-        <DialogHeader>{currentFAQ ? "Edit FAQ" : "Add FAQ"}</DialogHeader>
-        <DialogBody className="scrollbar-thin scrollbar-thumb-deep-orange-500 scrollbar-track-gray-200 h-[400px] overflow-y-auto">
+        <DialogHeader className="flex items-center justify-between">
+          {currentFAQ ? "Edit FAQ" : "Add FAQ"}
+          {alert.message && (
+            <Alert
+              color={alert.type}
+              onClose={() => setAlert({ message: "", type: "" })}
+              className="mb-4 max-w-xl md:max-w-4xl"
+            >
+              {alert.message}
+            </Alert>
+          )}
+        </DialogHeader>
+        <DialogBody className="h-[400px] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-deep-orange-500">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               label="Question"

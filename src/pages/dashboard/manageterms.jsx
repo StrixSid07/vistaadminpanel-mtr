@@ -250,7 +250,7 @@ export function ManageTerms() {
         </Button>
       </div>
 
-      <Card className="scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200 h-[calc(100vh-150px)] overflow-y-auto rounded-xl p-4 shadow-lg">
+      <Card className="h-[calc(100vh-150px)] overflow-y-auto rounded-xl p-4 shadow-lg scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
         <div className="space-y-6">
           {terms.map((term) => (
             <Card
@@ -333,8 +333,19 @@ export function ManageTerms() {
 
       {/* Add/Edit Term Dialog */}
       <Dialog open={openDialog} handler={handleCloseDialog} size="md">
-        <DialogHeader>{currentTerm ? "Edit Term" : "Add Term"}</DialogHeader>
-        <DialogBody className="scrollbar-thin scrollbar-thumb-deep-orange-500 scrollbar-track-gray-200 h-[400px] overflow-y-auto">
+        <DialogHeader className="flex items-center justify-between">
+          {currentTerm ? "Edit Term" : "Add Term"}{" "}
+          {alert.message && (
+            <Alert
+              color={alert.type}
+              onClose={() => setAlert({ message: "", type: "" })}
+              className="mb-4 max-w-xl md:max-w-4xl"
+            >
+              {alert.message}
+            </Alert>
+          )}
+        </DialogHeader>
+        <DialogBody className="h-[400px] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-deep-orange-500">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               label="Main Title"
@@ -569,7 +580,7 @@ export function ManageTerms() {
           </div>
         </DialogHeader>
 
-        <DialogBody className="scrollbar-thin scrollbar-thumb-deep-orange-500 scrollbar-track-gray-200 h-[400px] overflow-y-auto">
+        <DialogBody className="h-[400px] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-deep-orange-500">
           {currentTerm && (
             <div className="space-y-4">
               {currentTerm.data.map((dataEntry, dataIndex) => (

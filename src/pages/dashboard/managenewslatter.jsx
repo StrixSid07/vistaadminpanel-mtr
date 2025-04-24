@@ -177,7 +177,17 @@ export default function ManageNewsletter() {
 
       {/* Add Dialog */}
       <Dialog open={openDialog} handler={() => setOpenDialog(false)} size="sm">
-        <DialogHeader>Add Subscriber</DialogHeader>
+        <DialogHeader className="flex items-center justify-between">
+          Add Subscriber{" "}
+          {alert.message && (
+            <Alert
+              color={alert.type}
+              className="mb-4 max-w-xl transition-opacity duration-300 ease-in md:max-w-3xl"
+            >
+              {alert.message}
+            </Alert>
+          )}
+        </DialogHeader>
         <DialogBody>
           <Input
             label="Email"

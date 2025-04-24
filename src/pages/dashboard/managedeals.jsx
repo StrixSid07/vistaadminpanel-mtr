@@ -410,36 +410,36 @@ export const ManageDeals = () => {
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
   };
-const today = new Date();
-const minStartDate = new Date(today);
-minStartDate.setDate(today.getDate() + 2); // 2 days after today
+  const today = new Date();
+  const minStartDate = new Date(today);
+  minStartDate.setDate(today.getDate() + 2); // 2 days after today
   const minStartStr = minStartDate.toISOString().split("T")[0];
   const validateDateRange = (price, days) => {
-  if (!price.startdate || !price.enddate || !days) return;
+    if (!price.startdate || !price.enddate || !days) return;
 
-  const start = new Date(price.startdate);
-  const end = new Date(price.enddate);
+    const start = new Date(price.startdate);
+    const end = new Date(price.enddate);
 
-  if (end < start) {
-    window.alert("End date cannot be before start date.");
-    return;
-  }
+    if (end < start) {
+      window.alert("End date cannot be before start date.");
+      return;
+    }
 
-  const actualDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-  const enteredDays = parseInt(days, 10);
+    const actualDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    const enteredDays = parseInt(days, 10);
 
-  if (enteredDays !== actualDays) {
-     window.alert(
-      enteredDays < actualDays
-        ? `You entered fewer days (${enteredDays}) than the actual range (${actualDays}).`
-        : `You entered more days (${enteredDays}) than the actual range (${actualDays}).`
-    );
-  }
-};
+    if (enteredDays !== actualDays) {
+      window.alert(
+        enteredDays < actualDays
+          ? `You entered fewer days (${enteredDays}) than the actual range (${actualDays}).`
+          : `You entered more days (${enteredDays}) than the actual range (${actualDays}).`,
+      );
+    }
+  };
 
   return (
     <div className="h-screen w-full overflow-hidden px-4 py-6">
-      {alert.message && (
+      {/* {alert.message && (
         <Alert
           color={alert.type}
           onClose={() => setAlert({ message: "", type: "" })}
@@ -447,7 +447,7 @@ minStartDate.setDate(today.getDate() + 2); // 2 days after today
         >
           {alert.message}
         </Alert>
-      )}
+      )} */}
 
       <div className="mb-4 flex justify-end">
         <Button onClick={() => handleOpenDialog()} color="blue">
@@ -593,7 +593,18 @@ minStartDate.setDate(today.getDate() + 2); // 2 days after today
 
       {/* Add/Edit Deal Dialog */}
       <Dialog open={openDialog} handler={handleCloseDialog} size="lg">
-        <DialogHeader>{currentDeal ? "Edit Deal" : "Add Deal"}</DialogHeader>
+        <DialogHeader className="flex items-center justify-between gap-2">
+          {currentDeal ? "Edit Deal" : "Add Deal"}
+          {alert.message && (
+            <Alert
+              color={alert.type}
+              onClose={() => setAlert({ message: "", type: "" })}
+              className="mb-4 max-w-xl md:max-w-4xl"
+            >
+              {alert.message}
+            </Alert>
+          )}
+        </DialogHeader>
         <DialogBody className="h-[480px] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
@@ -618,7 +629,6 @@ minStartDate.setDate(today.getDate() + 2); // 2 days after today
               onChange={(e) =>
                 setFormData({ ...formData, tag: e.target.value })
               }
-              required
             />
             <Input
               label="Low Deposite"
@@ -626,7 +636,6 @@ minStartDate.setDate(today.getDate() + 2); // 2 days after today
               onChange={(e) =>
                 setFormData({ ...formData, LowDeposite: e.target.value })
               }
-              required
             />
             <Typography variant="h6">Available Countries</Typography>
             <div className="flex flex-wrap gap-1">
@@ -851,20 +860,20 @@ minStartDate.setDate(today.getDate() + 2); // 2 days after today
                   <Input
                     label="Start Date"
                     type="date"
-                     min={minStartStr}
+                    min={minStartStr}
                     value={price.startdate}
                     onChange={(e) => {
                       const updatedPrices = [...formData.prices];
                       updatedPrices[index].startdate = e.target.value;
-                       if (
-      updatedPrices[index].enddate &&
-      new Date(updatedPrices[index].enddate) < new Date(e.target.value)
-    ) {
-      updatedPrices[index].enddate = e.target.value;
-    }
+                      if (
+                        updatedPrices[index].enddate &&
+                        new Date(updatedPrices[index].enddate) <
+                          new Date(e.target.value)
+                      ) {
+                        updatedPrices[index].enddate = e.target.value;
+                      }
                       setFormData({ ...formData, prices: updatedPrices });
-                       validateDateRange(updatedPrices[index], formData.days);
-
+                      validateDateRange(updatedPrices[index], formData.days);
                     }}
                     required
                   />
@@ -877,8 +886,7 @@ minStartDate.setDate(today.getDate() + 2); // 2 days after today
                       const updatedPrices = [...formData.prices];
                       updatedPrices[index].enddate = e.target.value;
                       setFormData({ ...formData, prices: updatedPrices });
-                       validateDateRange(updatedPrices[index], formData.days);
-
+                      validateDateRange(updatedPrices[index], formData.days);
                     }}
                     required
                   />
@@ -1239,9 +1247,11 @@ minStartDate.setDate(today.getDate() + 2); // 2 days after today
               + Add Addition
             </Button>
 
-            <Typography variant="h6">Terms and Conditions</Typography>
+            <Typography variant="h6" className="hidden">
+              Terms and Conditions
+            </Typography>
             {formData.termsAndConditions.map((item, index) => (
-              <div key={index} className="mb-2 flex items-center gap-2">
+              <div key={index} className="mb-2 flex hidden items-center gap-2">
                 <Input
                   label={`Clause ${index + 1}`}
                   value={item}
@@ -1271,6 +1281,7 @@ minStartDate.setDate(today.getDate() + 2); // 2 days after today
             <Button
               size="sm"
               color="blue"
+              className="hidden"
               onClick={() =>
                 setFormData({
                   ...formData,
@@ -1375,7 +1386,12 @@ minStartDate.setDate(today.getDate() + 2); // 2 days after today
           </form>
         </DialogBody>
         <DialogFooter>
-          <Button onClick={handleCloseDialog} color="red" variant="text">
+          <Button
+            onClick={handleCloseDialog}
+            color="red"
+            className="mr-2"
+            variant="text"
+          >
             Cancel
           </Button>
           <Button onClick={handleSubmit} color="green" disabled={loading}>

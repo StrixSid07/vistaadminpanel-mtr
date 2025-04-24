@@ -252,7 +252,18 @@ export function ManageBlog() {
       </Card>
 
       <Dialog open={openDialog} handler={handleCloseDialog} size="md">
-        <DialogHeader>{currentblog ? "Edit blog" : "Add blog"}</DialogHeader>
+        <DialogHeader className="flex items-center justify-between">
+          {currentblog ? "Edit blog" : "Add blog"}{" "}
+          {alert.message && (
+            <Alert
+              color={alert.type}
+              onClose={() => setAlert({ message: "", type: "" })}
+              className="mb-4 max-w-xl md:max-w-4xl"
+            >
+              {alert.message}
+            </Alert>
+          )}
+        </DialogHeader>
 
         {/* Make form scrollable inside DialogBody */}
         <DialogBody className="max-h-[70vh] overflow-y-auto">
@@ -349,6 +360,7 @@ export function ManageBlog() {
           </Button>
         </DialogFooter>
       </Dialog>
+
       <Dialog open={openDeleteDialog} handler={setOpenDeleteDialog}>
         <DialogHeader>Confirm Delete</DialogHeader>
         <DialogBody>

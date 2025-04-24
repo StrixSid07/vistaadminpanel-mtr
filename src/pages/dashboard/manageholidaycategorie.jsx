@@ -185,8 +185,17 @@ export function ManageHolidayCategories() {
       </Card>
 
       <Dialog open={openDialog} handler={handleCloseDialog} size="md">
-        <DialogHeader>
+        <DialogHeader className="flex items-center justify-between">
           {currentHoliday ? "Edit Holiday Category" : "Add Holiday Category"}
+          {alert.message && (
+            <Alert
+              color={alert.type}
+              onClose={() => setAlert({ message: "", type: "" })}
+              className="mb-4 max-w-xl md:max-w-4xl"
+            >
+              {alert.message}
+            </Alert>
+          )}
         </DialogHeader>
         <DialogBody>
           <form onSubmit={handleSubmit} className="space-y-4">

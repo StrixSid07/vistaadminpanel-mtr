@@ -330,7 +330,18 @@ export function ManageHotel() {
 
       {/* Add/Edit Hotel Dialog */}
       <Dialog open={openDialog} handler={handleCloseDialog} size="md">
-        <DialogHeader>{currentHotel ? "Edit Hotel" : "Add Hotel"}</DialogHeader>
+        <DialogHeader className="flex items-center justify-between">
+          {currentHotel ? "Edit Hotel" : "Add Hotel"}{" "}
+          {alert.message && (
+            <Alert
+              color={alert.type}
+              onClose={() => setAlert({ message: "", type: "" })}
+              className="mb-4 max-w-xl md:max-w-4xl"
+            >
+              {alert.message}
+            </Alert>
+          )}
+        </DialogHeader>
         <DialogBody className="h-[480px] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
