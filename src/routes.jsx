@@ -16,6 +16,7 @@ import {
   ServerStackIcon,
   RectangleStackIcon,
   TicketIcon,
+  StopCircleIcon,
 } from "@heroicons/react/24/solid";
 import {
   Home,
@@ -32,6 +33,7 @@ import {
   ManageHolidayCategories,
   ManageBlog,
   ManageBooking,
+  ManageBoardBasis,
 } from "@/pages/dashboard";
 import { SignUp, LogIn } from "@/pages/auth";
 import ManageNewsletter from "./pages/dashboard/managenewslatter";
@@ -91,6 +93,12 @@ export const routes = [
         name: "Manage H Categories",
         path: "/Manage-holiday-categories",
         element: <ManageHolidayCategories />,
+      },
+      {
+        icon: <StopCircleIcon {...icon} />,
+        name: "Manage BoardBasis",
+        path: "/Manage-BoardBasis",
+        element: <ManageBoardBasis />,
       },
       {
         icon: <MapPinIcon {...icon} />,

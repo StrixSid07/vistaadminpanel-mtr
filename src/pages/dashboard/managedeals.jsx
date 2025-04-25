@@ -27,10 +27,12 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import axios from "@/utils/axiosInstance";
+import { MapIcon, MapPinIcon, StopCircleIcon } from "@heroicons/react/24/solid";
 
 export const ManageDeals = () => {
   const [deals, setDeals] = useState([]);
   const [destinations, setDestinations] = useState([]);
+  const [boardBasis, setBoardBasis] = useState([]);
   const [previewImages, setPreviewImages] = useState([]); // for showing all images
 
   const [airports, setAirports] = useState([]);
@@ -100,6 +102,7 @@ export const ManageDeals = () => {
     fetchAirports();
     fetchHotels();
     fetchHolidays();
+    fetchBoardBasis();
   }, []);
 
   const fetchDeals = async () => {
@@ -119,6 +122,16 @@ export const ManageDeals = () => {
     } catch (error) {
       console.error("Error fetching destinatinos:", error);
       setAlert({ message: "Error fetching destinatinos", type: "red" });
+    }
+  };
+
+  const fetchBoardBasis = async () => {
+    try {
+      const response = await axios.get("/boardbasis/dropdown-boardbasis");
+      setBoardBasis(response.data);
+    } catch (error) {
+      console.error("Error fetching boardbasis:", error);
+      setAlert({ message: "Error fetching boardbasis", type: "red" });
     }
   };
 
@@ -171,7 +184,7 @@ export const ManageDeals = () => {
             isTopDeal: deal.isTopDeal || false,
             isHotdeal: deal.isHotdeal || false,
             isFeatured: deal.isFeatured || false,
-            boardBasis: deal.boardBasis || "",
+            boardBasis: deal.boardBasis ? deal.boardBasis._id : "" || "",
             hotels: Array.isArray(deal.hotels)
               ? deal.hotels.map((h) => (typeof h === "object" ? h._id : h))
               : [],
@@ -474,6 +487,24 @@ export const ManageDeals = () => {
                     {deal.title}
                   </Typography>
 
+                  <Typography
+                    variant="h6"
+                    color="deep-orange"
+                    className="flex items-center justify-start gap-1"
+                  >
+                    <MapPinIcon className="mb-1 h-5 w-5" />
+                    {deal.destination.name}
+                  </Typography>
+
+                  <Typography
+                    variant="sm"
+                    color="deep-orange"
+                    className="flex items-center justify-start gap-2 font-normal"
+                  >
+                    <StopCircleIcon className="mb-1 ml-1 h-3 w-3" />
+                    {deal.boardBasis.name}
+                  </Typography>
+
                   {/* Flags */}
                   <div className="mt-2 flex items-center space-x-4">
                     <div className="flex items-center gap-1">
@@ -501,7 +532,7 @@ export const ManageDeals = () => {
                   {/* Categories */}
                   <div className="mt-2">
                     <Typography
-                      variant="subtitle2"
+                      variant="text"
                       className="font-bold text-deep-orange-300"
                     >
                       Categories:
@@ -729,9 +760,10 @@ export const ManageDeals = () => {
 
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
               <Input
-                label="Number of Days"
+                label="Number of Nights"
                 type="number"
-                value={formData.days}
+                // value={formData.days}
+                value={formData.days === 0 ? "" : formData.days}
                 onChange={(e) =>
                   setFormData({ ...formData, days: Number(e.target.value) })
                 }
@@ -746,9 +778,9 @@ export const ManageDeals = () => {
                 }
                 required
               >
-                {["Half Board", "Full Board", "All Inclusive"].map((option) => (
-                  <Option key={option} value={option}>
-                    {option}
+                {boardBasis.map((boardBasis) => (
+                  <Option key={boardBasis._id} value={boardBasis._id}>
+                    {boardBasis.name}
                   </Option>
                 ))}
               </Select>
@@ -893,7 +925,7 @@ export const ManageDeals = () => {
                   <Input
                     label="Price"
                     type="number"
-                    value={price.price}
+                    value={price.price === 0 ? "" : price.price}
                     onChange={(e) => {
                       const updatedPrices = [...formData.prices];
                       updatedPrices[index].price = Number(e.target.value);
@@ -1296,20 +1328,20 @@ export const ManageDeals = () => {
               <Input
                 label="Number of Rooms"
                 type="number"
-                value={formData.rooms}
+                // value={formData.rooms}
+                value={formData.rooms === 0 ? "" : formData.rooms}
                 onChange={(e) =>
                   setFormData({ ...formData, rooms: Number(e.target.value) })
                 }
-                required
               />
               <Input
                 label="Number of Guests"
                 type="number"
-                value={formData.guests}
+                // value={formData.guests}
+                value={formData.guests === 0 ? "" : formData.guests}
                 onChange={(e) =>
                   setFormData({ ...formData, guests: Number(e.target.value) })
                 }
-                required
               />
               <Input
                 label="Distance to Center (km)"
@@ -1317,7 +1349,6 @@ export const ManageDeals = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, distanceToCenter: e.target.value })
                 }
-                required
               />
               <Input
                 label="Distance to Beach (km)"
@@ -1325,7 +1356,6 @@ export const ManageDeals = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, distanceToBeach: e.target.value })
                 }
-                required
               />
             </div>
             <Card className="mt-6 border border-blue-500 shadow-md">
@@ -1530,7 +1560,7 @@ export const ManageDeals = () => {
                     <span className="font-bold text-deep-orange-500">
                       Board Basis:
                     </span>{" "}
-                    {currentDeal.boardBasis || "N/A"}
+                    {currentDeal.boardBasis.name || "N/A"}
                   </Typography>
                   <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
                     <Typography variant="paragraph" className="text-black">
@@ -1549,7 +1579,7 @@ export const ManageDeals = () => {
                   <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-3">
                     <Typography variant="paragraph" className="text-black">
                       <span className="font-bold text-deep-orange-500">
-                        Days:
+                        Nights:
                       </span>{" "}
                       {currentDeal.days || "N/A"}
                     </Typography>
