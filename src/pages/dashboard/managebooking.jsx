@@ -58,6 +58,17 @@ export function ManageBooking() {
   const [openStatusDialog, setOpenStatusDialog] = useState(false);
   const [statusBooking, setStatusBooking] = useState(null);
   const [statusValue, setStatusValue] = useState("pending");
+  const [openEmailDialog, setOpenEmailDialog] = useState(false);
+  const [emailData, setEmailData] = useState({
+    name: "",
+    email: "",
+    destination: "",
+    bookingRef: "",
+    pax: 1,
+    departureDate: "",
+    nights: 0,
+    days: 0,
+  });
 
   useEffect(() => {
     fetchBookings();
@@ -223,6 +234,38 @@ export function ManageBooking() {
   const handleCloseViewDialog = () => {
     setOpenViewDialog(false);
     setCurrentBooking(null);
+  };
+
+  const handleOpenEmailDialog = (booking) => {
+    setCurrentBooking(booking);
+    setEmailData({
+      name: booking.name,
+      email: booking.email,
+      destination: booking.dealId.title,
+      bookingRef: booking._id,
+      pax: booking.adults,
+      departureDate: booking.selectedDate,
+      nights: booking.nights || 0, // Adjust based on your data structure
+      days: booking.days || 0, // Adjust based on your data structure
+    });
+    setOpenEmailDialog(true);
+  };
+
+  const handleCloseEmailDialog = () => {
+    setOpenEmailDialog(false);
+    setAlert({ message: "", type: "" });
+  };
+
+  const handleEmailSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("/mail/send-booking-info", emailData);
+      setAlert({ message: "Booking confirmation sent!", type: "green" });
+      handleCloseEmailDialog();
+    } catch (error) {
+      console.error("Error sending email:", error);
+      setAlert({ message: "Failed to send confirmation email.", type: "red" });
+    }
   };
 
   return (
@@ -453,6 +496,16 @@ export function ManageBooking() {
                         <TrashIcon className="h-5 w-5" />
                       </Button>
                     </Tooltip>
+                    {/* Actions */}
+                    <div className="flex flex-col items-end gap-4">
+                      <Button
+                        onClick={() => handleOpenEmailDialog(booking)}
+                        color="blue"
+                      >
+                        Send Confirmation Email
+                      </Button>
+                      {/* Other action buttons (view, edit, delete) */}
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -713,6 +766,72 @@ export function ManageBooking() {
             </Typography>
           )}
         </DialogBody>
+      </Dialog>
+
+      {/* Send Email Dialog */}
+      <Dialog open={openEmailDialog} handler={handleCloseEmailDialog} size="md">
+        <DialogHeader>Send Booking Confirmation</DialogHeader>
+        <DialogBody>
+          {alert.message && (
+            <Alert
+              color={alert.type}
+              onClose={() => setAlert({ message: "", type: "" })}
+            >
+              {alert.message}
+            </Alert>
+          )}
+          <form onSubmit={handleEmailSubmit} className="space-y-4">
+            <Input label="Name" value={emailData.name} readOnly />
+            <Input
+              label="Email"
+              type="email"
+              value={emailData.email}
+              readOnly
+            />
+            <Input label="Destination" value={emailData.destination} readOnly />
+            <Input
+              label="Booking Reference"
+              value={emailData.bookingRef}
+              readOnly
+            />
+            <Input
+              label="Number of Travellers"
+              type="number"
+              value={emailData.pax}
+              readOnly
+            />
+            <Input
+              label="Departure Date"
+              type="date"
+              value={emailData.departureDate}
+              readOnly
+            />
+            <Input
+              label="Nights"
+              type="number"
+              value={emailData.nights}
+              onChange={(e) =>
+                setEmailData({ ...emailData, nights: e.target.value })
+              }
+            />
+            <Input
+              label="Days"
+              type="number"
+              value={emailData.days}
+              onChange={(e) =>
+                setEmailData({ ...emailData, days: e.target.value })
+              }
+            />
+            <Button type="submit" color="green">
+              Send Email
+            </Button>
+          </form>
+        </DialogBody>
+        <DialogFooter>
+          <Button onClick={handleCloseEmailDialog} color="red">
+            Cancel
+          </Button>
+        </DialogFooter>
       </Dialog>
 
       {/* ——— Status Update Dialog ——— */}
