@@ -861,8 +861,8 @@ export const ManageDeals = () => {
                         color="green"
                         className="w-full text-left"
                       >
-                        {formData.prices[0].airport.length > 0
-                          ? `${formData.prices[0].airport.length} airport(s) selected`
+                        {formData.prices[index].airport.length > 0
+                          ? `${formData.prices[index].airport.length} airport(s) selected`
                           : "Select Airports"}
                       </Button>
                     </MenuHandler>
@@ -878,29 +878,22 @@ export const ManageDeals = () => {
                             ripple={false}
                             containerProps={{ className: "p-0" }}
                             className="hover:before:content-none"
-                            checked={formData.prices[0].airport.includes(
-                              airport._id,
-                            )}
+                            checked={price.airport?.includes(airport._id)}
                             onChange={(e) => {
-                              e.stopPropagation(); // Prevent bubbling
-                              const isChecked = e.target.checked;
-                              const updatedAirports = isChecked
-                                ? [...formData.prices[0].airport, airport._id]
-                                : formData.prices[0].airport.filter(
-                                    (id) => id !== airport._id,
-                                  );
+            e.stopPropagation();
+            const isChecked = e.target.checked;
+            const updatedPrices = [...formData.prices];
+            const updatedAirports = isChecked
+              ? [...(updatedPrices[index].airport || []), airport._id]
+              : (updatedPrices[index].airport || []).filter((id) => id !== airport._id);
 
-                              const updatedPrices = [...formData.prices];
-                              updatedPrices[0] = {
-                                ...updatedPrices[0],
-                                airport: updatedAirports,
-                              };
+            updatedPrices[index] = {
+              ...updatedPrices[index],
+              airport: updatedAirports,
+            };
 
-                              setFormData({
-                                ...formData,
-                                prices: updatedPrices,
-                              });
-                            }}
+            setFormData({ ...formData, prices: updatedPrices });
+          }}
                           />
                           <span>
                             {airport.name} ({airport.code})
