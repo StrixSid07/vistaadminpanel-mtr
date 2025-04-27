@@ -67,7 +67,6 @@ export function ManageBooking() {
     pax: 1,
     departureDate: "",
     nights: 0,
-    days: 0,
   });
 
   useEffect(() => {
@@ -237,17 +236,23 @@ export function ManageBooking() {
   };
 
   const handleOpenEmailDialog = (booking) => {
+    const formattedDeparture = booking.selectedDate
+      ? booking.selectedDate.split("T")[0]
+      : "";
     setCurrentBooking(booking);
+    console.log(booking);
+    const selectedDeal = deals.find((d) => d.id === booking.dealId);
     setEmailData({
       name: booking.name,
       email: booking.email,
       destination: booking.dealId.title,
       bookingRef: booking._id,
       pax: booking.adults,
-      departureDate: booking.selectedDate,
-      nights: booking.nights || 0, // Adjust based on your data structure
-      days: booking.days || 0, // Adjust based on your data structure
+      departureDate: formattedDeparture,
+      nights: booking.nights || 0,
+      days: booking.days || 0,
     });
+    setSelectedDeal(selectedDeal);
     setOpenEmailDialog(true);
   };
 
@@ -771,7 +776,7 @@ export function ManageBooking() {
       {/* Send Email Dialog */}
       <Dialog open={openEmailDialog} handler={handleCloseEmailDialog} size="md">
         <DialogHeader>Send Booking Confirmation</DialogHeader>
-        <DialogBody>
+        <DialogBody className="h-[480px] space-y-4 overflow-y-auto bg-gray-50 p-4 scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
           {alert.message && (
             <Alert
               color={alert.type}
@@ -781,6 +786,57 @@ export function ManageBooking() {
             </Alert>
           )}
           <form onSubmit={handleEmailSubmit} className="space-y-4">
+            {/* Deal */}
+            <Select
+              label="Select Deal"
+              value={emailData.dealId || ""}
+              onChange={(dealId) => {
+                const deal = deals.find((d) => d.id === dealId);
+                setSelectedDeal(deal);
+                setSelectedPrice(null);
+                setEmailData((prev) => ({
+                  ...prev,
+                  dealId,
+                  destination: deal?.title || "", // Set destination to the title of the selected deal
+                  selectedDate: "",
+                  returnDate: "",
+                }));
+              }}
+            >
+              {deals.map((deal) => (
+                <Option key={deal.id} value={deal.id}>
+                  {deal.title}
+                </Option>
+              ))}
+            </Select>
+
+            {/* Dates (only for setting dates) */}
+            {selectedDeal && (
+              <Select
+                label="Select Departure & Return Dates"
+                value={selectedPrice?.startdate || ""}
+                onChange={(iso) => {
+                  const price = selectedDeal.prices.find(
+                    (p) => new Date(p.startdate).toISOString() === iso,
+                  );
+                  setSelectedPrice(price);
+                  setEmailData((prev) => ({
+                    ...prev,
+                    selectedDate: price.startdate.split("T")[0],
+                    returnDate: price.enddate.split("T")[0],
+                  }));
+                }}
+              >
+                {selectedDeal.prices.map((p, i) => (
+                  <Option key={i} value={new Date(p.startdate).toISOString()}>
+                    {p.airport} – {new Date(p.startdate).toLocaleDateString()} →{" "}
+                    {new Date(p.enddate).toLocaleDateString()} (£{p.price})
+                  </Option>
+                ))}
+              </Select>
+            )}
+
+            {/* Read-only basics */}
             <Input label="Name" value={emailData.name} readOnly />
             <Input
               label="Email"
@@ -788,23 +844,71 @@ export function ManageBooking() {
               value={emailData.email}
               readOnly
             />
-            <Input label="Destination" value={emailData.destination} readOnly />
             <Input
               label="Booking Reference"
               value={emailData.bookingRef}
               readOnly
             />
+
+            {/* Destination w/ clear button */}
+            <div className="relative">
+              <Input
+                label="Destination"
+                value={emailData.destination}
+                onChange={(e) =>
+                  setEmailData((prev) => ({
+                    ...prev,
+                    destination: e.target.value,
+                  }))
+                }
+                required
+              />
+              {emailData.destination && (
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 transform"
+                  onClick={() =>
+                    setEmailData((prev) => ({ ...prev, destination: "" }))
+                  }
+                >
+                  <XMarkIcon className="h-4 w-4 text-blue-400 hover:text-blue-600" />
+                </button>
+              )}
+            </div>
+
+            {/* Pax + Dates editable */}
             <Input
               label="Number of Travellers"
               type="number"
               value={emailData.pax}
-              readOnly
+              onChange={(e) =>
+                setEmailData((prev) => ({ ...prev, pax: e.target.value }))
+              }
+              required
             />
             <Input
               label="Departure Date"
               type="date"
-              value={emailData.departureDate}
-              readOnly
+              value={emailData.selectedDate}
+              onChange={(e) =>
+                setEmailData((prev) => ({
+                  ...prev,
+                  selectedDate: e.target.value,
+                }))
+              }
+              required
+            />
+            <Input
+              label="Return Date"
+              type="date"
+              value={emailData.returnDate}
+              onChange={(e) =>
+                setEmailData((prev) => ({
+                  ...prev,
+                  returnDate: e.target.value,
+                }))
+              }
+              required
             />
             <Input
               label="Nights"
@@ -822,6 +926,7 @@ export function ManageBooking() {
                 setEmailData({ ...emailData, days: e.target.value })
               }
             />
+
             <Button type="submit" color="green">
               Send Email
             </Button>

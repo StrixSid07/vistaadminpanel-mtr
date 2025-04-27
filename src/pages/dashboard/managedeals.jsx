@@ -67,7 +67,7 @@ export const ManageDeals = () => {
     prices: [
       {
         country: "",
-        airport: "",
+        airport: [],
         hotel: "",
         startdate: "",
         enddate: "",
@@ -229,6 +229,11 @@ export const ManageDeals = () => {
               deal.prices.length > 0
                 ? deal.prices.map((price) => ({
                     ...price,
+                    airport: Array.isArray(price.airport)
+                      ? price.airport.map((a) =>
+                          typeof a === "object" ? a._id : a,
+                        )
+                      : [],
                     startdate: price.startdate.split("T")[0], // Convert to YYYY-MM-DD
                     enddate: price.enddate.split("T")[0], // Convert to YYYY-MM-DD
                     hotel:
@@ -287,7 +292,7 @@ export const ManageDeals = () => {
             prices: [
               {
                 country: "",
-                airport: "",
+                airport: [],
                 hotel: "",
                 startdate: "", // Ensure this is initialized as an empty string
                 enddate: "", // Ensure this is initialized as an empty string
@@ -452,7 +457,7 @@ export const ManageDeals = () => {
 
   return (
     <div className="h-screen w-full overflow-hidden px-4 py-6">
-      {/* {alert.message && (
+      {alert.message && (
         <Alert
           color={alert.type}
           onClose={() => setAlert({ message: "", type: "" })}
@@ -460,7 +465,7 @@ export const ManageDeals = () => {
         >
           {alert.message}
         </Alert>
-      )} */}
+      )}
 
       <div className="mb-4 flex justify-end">
         <Button onClick={() => handleOpenDialog()} color="blue">
@@ -849,22 +854,61 @@ export const ManageDeals = () => {
                     ))}
                   </Select>
 
-                  <Select
-                    label="Airport"
-                    value={price.airport}
-                    onChange={(value) => {
-                      const updatedPrices = [...formData.prices];
-                      updatedPrices[index].airport = value;
-                      setFormData({ ...formData, prices: updatedPrices });
-                    }}
-                    required
-                  >
-                    {airports.map((airport) => (
-                      <Option key={airport.code} value={airport.code}>
-                        {airport.name}
-                      </Option>
-                    ))}
-                  </Select>
+                  <Menu placement="bottom-start">
+                    <MenuHandler>
+                      <Button
+                        variant="gradient"
+                        color="green"
+                        className="w-full text-left"
+                      >
+                        {formData.prices[0].airport.length > 0
+                          ? `${formData.prices[0].airport.length} airport(s) selected`
+                          : "Select Airports"}
+                      </Button>
+                    </MenuHandler>
+                    <MenuList className="z-[100000] max-h-64 overflow-auto">
+                      {airports.map((airport) => (
+                        <MenuItem
+                          key={airport._id}
+                          className="flex items-center gap-2"
+                          onClick={(e) => e.preventDefault()} // Prevent dropdown from closing
+                        >
+                          <Checkbox
+                            color="green"
+                            ripple={false}
+                            containerProps={{ className: "p-0" }}
+                            className="hover:before:content-none"
+                            checked={formData.prices[0].airport.includes(
+                              airport._id,
+                            )}
+                            onChange={(e) => {
+                              e.stopPropagation(); // Prevent bubbling
+                              const isChecked = e.target.checked;
+                              const updatedAirports = isChecked
+                                ? [...formData.prices[0].airport, airport._id]
+                                : formData.prices[0].airport.filter(
+                                    (id) => id !== airport._id,
+                                  );
+
+                              const updatedPrices = [...formData.prices];
+                              updatedPrices[0] = {
+                                ...updatedPrices[0],
+                                airport: updatedAirports,
+                              };
+
+                              setFormData({
+                                ...formData,
+                                prices: updatedPrices,
+                              });
+                            }}
+                          />
+                          <span>
+                            {airport.name} ({airport.code})
+                          </span>
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Menu>
 
                   <Select
                     label="Hotel"
@@ -1728,7 +1772,19 @@ export const ManageDeals = () => {
                                 : "N/A"}
                             </div>
                             <div>
-                              <strong>Airport:</strong> {price.airport || "N/A"}
+                              <strong>Airport:</strong>{" "}
+                              {price.airport && price.airport.length > 0
+                                ? price.airport
+                                    .map((airportId) => {
+                                      const airportObj = airports.find(
+                                        (a) => a._id === airportId,
+                                      );
+                                      return airportObj
+                                        ? `${airportObj.name} (${airportObj.code})`
+                                        : "Unknown Airport";
+                                    })
+                                    .join(", ")
+                                : "N/A"}
                             </div>
                             <div>
                               <strong>Price:</strong> {price.price || "N/A"}
