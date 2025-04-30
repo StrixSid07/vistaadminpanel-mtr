@@ -14,6 +14,7 @@ import {
   Alert,
   Tooltip,
   Select,
+  Switch,
   Option,
   Menu,
   MenuHandler,
@@ -27,7 +28,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import axios from "@/utils/axiosInstance";
-import { MapIcon, MapPinIcon, StopCircleIcon } from "@heroicons/react/24/solid";
+import { MapPinIcon, StopCircleIcon } from "@heroicons/react/24/solid";
 
 export const ManageDeals = () => {
   const [deals, setDeals] = useState([]);
@@ -67,6 +68,7 @@ export const ManageDeals = () => {
     prices: [
       {
         country: "",
+        priceswitch: false,
         airport: [],
         hotel: "",
         startdate: "",
@@ -107,7 +109,7 @@ export const ManageDeals = () => {
 
   const fetchDeals = async () => {
     try {
-      const response = await axios.get("/deals");
+      const response = await axios.get("/admin/deals");
       setDeals(response.data);
     } catch (error) {
       console.error("Error fetching deals:", error);
@@ -244,6 +246,7 @@ export const ManageDeals = () => {
                 : [
                     {
                       country: "",
+                      priceswitch: false,
                       airport: "",
                       hotel: "",
                       startdate: "", // Ensure this is initialized as an empty string
@@ -292,6 +295,7 @@ export const ManageDeals = () => {
             prices: [
               {
                 country: "",
+                priceswitch: false,
                 airport: [],
                 hotel: "",
                 startdate: "", // Ensure this is initialized as an empty string
@@ -836,6 +840,30 @@ export const ManageDeals = () => {
             <Typography variant="h6">Price Details</Typography>
             {formData.prices.map((price, index) => (
               <div key={index} className="mb-4 space-y-2 rounded border p-3">
+                {/* Add the Switch for priceswitch */}
+                <div className="flex items-center">
+                  <Switch
+                    id={`priceswitch-${index}`}
+                    ripple={false}
+                    checked={price.priceswitch}
+                    onChange={(e) => {
+                      const updatedPrices = [...formData.prices];
+                      updatedPrices[index].priceswitch = e.target.checked;
+                      setFormData({ ...formData, prices: updatedPrices });
+                    }}
+                    className="h-full w-full checked:bg-black"
+                    containerProps={{
+                      className: "w-11 h-6",
+                    }}
+                    circleProps={{
+                      className: "before:hidden left-0.5 border-none",
+                    }}
+                  />
+                  <label className="ml-2" htmlFor={`priceswitch-${index}`}>
+                    Price Switch (turn switch to black for off in website)
+                  </label>
+                </div>
+
                 <div className="grid grid-cols-1 gap-2 p-2 md:grid-cols-3">
                   <Select
                     label="Country"
@@ -880,20 +908,28 @@ export const ManageDeals = () => {
                             className="hover:before:content-none"
                             checked={price.airport?.includes(airport._id)}
                             onChange={(e) => {
-            e.stopPropagation();
-            const isChecked = e.target.checked;
-            const updatedPrices = [...formData.prices];
-            const updatedAirports = isChecked
-              ? [...(updatedPrices[index].airport || []), airport._id]
-              : (updatedPrices[index].airport || []).filter((id) => id !== airport._id);
+                              e.stopPropagation();
+                              const isChecked = e.target.checked;
+                              const updatedPrices = [...formData.prices];
+                              const updatedAirports = isChecked
+                                ? [
+                                    ...(updatedPrices[index].airport || []),
+                                    airport._id,
+                                  ]
+                                : (updatedPrices[index].airport || []).filter(
+                                    (id) => id !== airport._id,
+                                  );
 
-            updatedPrices[index] = {
-              ...updatedPrices[index],
-              airport: updatedAirports,
-            };
+                              updatedPrices[index] = {
+                                ...updatedPrices[index],
+                                airport: updatedAirports,
+                              };
 
-            setFormData({ ...formData, prices: updatedPrices });
-          }}
+                              setFormData({
+                                ...formData,
+                                prices: updatedPrices,
+                              });
+                            }}
                           />
                           <span>
                             {airport.name} ({airport.code})
@@ -1104,6 +1140,7 @@ export const ManageDeals = () => {
                     ...formData.prices,
                     {
                       country: "",
+                      priceswitch: false,
                       airport: "",
                       hotel: "",
                       startdate: "",
