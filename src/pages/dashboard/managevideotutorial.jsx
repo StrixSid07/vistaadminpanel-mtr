@@ -14,24 +14,146 @@ import { PlayIcon } from "@heroicons/react/24/solid";
 const tutorials = [
   {
     id: 1,
-    title: "How to Manage Destinations",
-    videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", // Replace with actual URLs
-    notes: "This tutorial covers how to add, edit, and delete destinations.",
+    title: "Admin Login",
+    videoUrl: "/videosmp4/AdminLogin.mp4",
+    notes: "This tutorial covers how to log into the admin dashboard securely.",
     checklist: [
-      "Open the Manage Destination panel",
-      "Fill the form correctly",
-      "Handle image upload and deletion",
+      "Open login page",
+      "Enter valid credentials",
+      "Access the dashboard",
     ],
   },
   {
     id: 2,
-    title: "Managing Deals and Offers",
-    videoUrl: "https://www.w3schools.com/html/movie.mp4",
-    notes: "Learn how to manage deals, prices, and categories in this section.",
+    title: "Manage Airport",
+    videoUrl: "/videosmp4/ManageAirport.mp4",
+    notes: "How to add, edit, or remove airports in the system.",
     checklist: [
-      "Go to Manage Deals",
-      "Use filters to find deals",
-      "Edit deals or add new ones",
+      "Go to Manage Airports",
+      "Add new airport details",
+      "Save and verify changes",
+    ],
+  },
+  {
+    id: 3,
+    title: "Manage Blogs",
+    videoUrl: "/videosmp4/ManageBlogs.mp4",
+    notes: "Manage blog posts for the website.",
+    checklist: [
+      "Open Blog Management",
+      "Add or edit blog content",
+      "Publish updates",
+    ],
+  },
+  {
+    id: 4,
+    title: "Manage Board Basis",
+    videoUrl: "/videosmp4/ManageBoardBasis.mp4",
+    notes:
+      "Handle board basis options such as All-Inclusive or Bed & Breakfast.",
+    checklist: [
+      "Navigate to Board Basis settings",
+      "Add or edit entries",
+      "Save changes",
+    ],
+  },
+  {
+    id: 5,
+    title: "Manage Carousel",
+    videoUrl: "/videosmp4/ManageCarousel.mp4",
+    notes: "Learn to update homepage carousel images.",
+    checklist: [
+      "Go to Carousel section",
+      "Upload new images",
+      "Delete outdated ones",
+    ],
+  },
+  {
+    id: 6,
+    title: "Manage Deals",
+    videoUrl: "/videosmp4/ManageDeals.mp4",
+    notes: "Create and manage travel deals and offers.",
+    checklist: [
+      "Open Deals Management",
+      "Use filters and edit tools",
+      "Save or remove deals",
+    ],
+  },
+  {
+    id: 7,
+    title: "Manage Deals External",
+    videoUrl: "/videosmp4/ManageDealsExternal.mp4",
+    notes: "Upload and manage external deals via Excel.",
+    checklist: [
+      "Go to External Deals",
+      "Download and edit Excel template",
+      "Re-upload for batch update",
+    ],
+  },
+  {
+    id: 8,
+    title: "Manage Destinations",
+    videoUrl: "/videosmp4/ManageDestinations.mp4",
+    notes: "Manage destination entries for packages.",
+    checklist: [
+      "Navigate to Destinations",
+      "Add or remove destinations",
+      "Link destinations to packages",
+    ],
+  },
+  {
+    id: 9,
+    title: "Manage FAQs",
+    videoUrl: "/videosmp4/ManageFaqs.mp4",
+    notes: "Create and organize frequently asked questions.",
+    checklist: [
+      "Go to FAQ section",
+      "Add new questions",
+      "Update or remove answers",
+    ],
+  },
+  {
+    id: 10,
+    title: "Manage Holiday Categories",
+    videoUrl: "/videosmp4/ManageHolidayCategories.mp4",
+    notes: "Edit and assign holiday categories to deals.",
+    checklist: [
+      "Access Holiday Categories",
+      "Add new or update existing ones",
+      "Link to appropriate deals",
+    ],
+  },
+  {
+    id: 11,
+    title: "Manage Hotels",
+    videoUrl: "/videosmp4/ManageHotels.mp4",
+    notes: "Maintain hotel records including images and info.",
+    checklist: [
+      "Open Hotel Management",
+      "Edit hotel details",
+      "Save and publish",
+    ],
+  },
+  {
+    id: 12,
+    title: "Manage Terms",
+    videoUrl: "/videosmp4/ManageTerms.mp4",
+    notes: "Configure booking terms and policies.",
+    checklist: [
+      "Go to Terms section",
+      "Add or edit policies",
+      "Save and display updates",
+    ],
+  },
+  {
+    id: 13,
+    title: "Manage Users",
+    videoUrl: "/videosmp4/ManageUser.mp4",
+    notes: "Handle user accounts and admin access.",
+    checklist: [
+      "Open User Management",
+      "Edit roles and permissions",
+      "Disable or delete users",
     ],
   },
 ];

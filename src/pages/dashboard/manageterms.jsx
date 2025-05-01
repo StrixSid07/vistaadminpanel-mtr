@@ -205,7 +205,7 @@ export function ManageTerms() {
             {currentTerm?.title}
           </Typography>
         </DialogHeader>
-        <DialogBody>
+        <DialogBody className="h-[480px] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
           <div
             className="prose max-w-none text-base font-medium leading-relaxed"
             dangerouslySetInnerHTML={{ __html: currentTerm?.content }}
@@ -234,7 +234,7 @@ export function ManageTerms() {
             </Alert>
           )}
         </DialogHeader>
-        <DialogBody>
+        <DialogBody className="h-[480px] overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500">
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-sm font-semibold text-gray-700">
@@ -301,7 +301,7 @@ export function ManageTerms() {
             Are you sure you want to delete the term "{termTitle}"?
           </Typography>
         </DialogBody>
-        <DialogFooter>
+        <DialogFooter className="flex items-center justify-end gap-2">
           <Button color="red" onClick={() => handleDelete(deleteId)}>
             Delete
           </Button>

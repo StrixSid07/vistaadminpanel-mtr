@@ -7,10 +7,4 @@ module.exports = withMT({
     extend: {},
   },
   plugins: [require("tailwind-scrollbar"), require("tailwind-scrollbar-hide")],
-  safelist: [
-    {
-      // this regex will match any hex color in the form `scrollbar-thumb-[#a1b2c3]`
-      pattern: /scrollbar-thumb-\[#(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})\]/,
-    },
-  ],
 });

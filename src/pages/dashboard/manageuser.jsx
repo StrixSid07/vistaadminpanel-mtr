@@ -88,14 +88,17 @@ export function ManageUsers() {
         await axios.put(`/auth/users/${currentUser._id}`, formData);
         setAlert({ message: "User  updated successfully!", type: "green" });
       } else {
-        await axios.post("/auth/register", formData);
+        await axios.post("/auth/admin/create-user", formData);
         setAlert({ message: "User  added successfully!", type: "green" });
       }
       fetchUsers();
       handleCloseDialog();
     } catch (error) {
       console.error("Error saving user:", error);
-      setAlert({ message: "Error saving user", type: "red" });
+      setAlert({
+        message: error.response?.data?.message || "Error saving user",
+        type: "red",
+      });
     } finally {
       setLoading(false);
     }
