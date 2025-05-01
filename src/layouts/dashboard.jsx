@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { IconButton } from "@material-tailwind/react";
 import PageHighlighter from "@/utils/PageHighlighter";
@@ -16,6 +16,10 @@ export function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavType } = controller;
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
