@@ -146,20 +146,28 @@ export function LogIn() {
               <Input
                 label="Email"
                 value={loginId}
+                variant="standard"
                 color="deep-orange"
-                className="text-white"
+                className="bg-transparent text-white"
                 onChange={(e) => setLoginId(e.target.value)}
+                onFocus={(e) => e.target.setAttribute("autocomplete", "email")}
                 crossOrigin=""
+                autoComplete="off"
               />
               <div className="relative">
                 <Input
                   label="Password"
+                  variant="standard"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   color="deep-orange"
-                  className="text-white"
+                  className="bg-transparent text-white"
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={(e) =>
+                    e.target.setAttribute("autocomplete", "current-password")
+                  }
                   crossOrigin=""
+                  autoComplete="new-password"
                 />
                 <motion.div
                   whileHover={{ scale: 1.2 }}
@@ -208,6 +216,22 @@ export function LogIn() {
           </Card>
         </motion.div>
       </motion.div>
+      <style>
+        {`
+    input:-webkit-autofill {
+      box-shadow: 0 0 0px 1000px transparent inset !important;
+      -webkit-text-fill-color: #ffffff !important;
+      caret-color: #ffffff !important;
+      transition: background-color 5000s ease-in-out 0s;
+      outline: none !important;
+    }
+
+    input:focus {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+  `}
+      </style>
     </motion.div>
   );
 }
