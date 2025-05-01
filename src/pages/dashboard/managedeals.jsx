@@ -109,7 +109,7 @@ export const ManageDeals = () => {
 
   const fetchDeals = async () => {
     try {
-      const response = await axios.get("/admin/deals");
+      const response = await axios.get("/deals/admin");
       setDeals(response.data);
     } catch (error) {
       console.error("Error fetching deals:", error);
@@ -377,7 +377,9 @@ export const ManageDeals = () => {
       handleCloseDialog();
     } catch (error) {
       console.error("Error saving deal:", error);
-      setAlert({ message: "Error saving deal", type: "red" });
+      const errorMessage =
+        error.response?.data?.message || error.message || "Error saving deal";
+      setAlert({ message: errorMessage, type: "red" });
     } finally {
       setLoading(false);
     }
@@ -458,6 +460,15 @@ export const ManageDeals = () => {
       );
     }
   };
+
+  useEffect(() => {
+    if (alert.message) {
+      const timer = setTimeout(() => {
+        setAlert({ message: "", type: "" });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [alert]);
 
   return (
     <div className="h-screen w-full overflow-hidden px-4 py-6">

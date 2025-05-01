@@ -79,7 +79,9 @@ export function Sidenav({ brandImg, brandName, routes }) {
           </IconButton>
         </div>
 
-        <div className="m-4">
+        <div
+          className={`m-4 h-[calc(100vh-32px-96px)]  overflow-y-auto p-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-blue-500`}
+        >
           {routes.map(({ layout, title, pages }, key) => (
             <ul key={key} className="mb-4 flex flex-col gap-1">
               {title && (

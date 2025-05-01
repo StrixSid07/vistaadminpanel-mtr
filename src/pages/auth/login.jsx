@@ -66,12 +66,20 @@ export function LogIn() {
 
   return (
     <motion.div
-      className="flex min-h-screen w-full items-center justify-center bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/img/login-bg.svg')" }}
+      className="relative flex min-h-screen w-full items-center justify-center bg-cover bg-center bg-repeat"
+      style={{
+        backgroundImage: "url('/img/vivavista.png')",
+        backgroundSize: "100px 100px", // Increased a bit for readability
+        backgroundPosition: "0 0",
+        backdropFilter: "blur(2px)", // slight blur
+        WebkitBackdropFilter: "blur(2px)",
+        opacity: 0.9,
+      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
+      <div className="absolute inset-0 z-0 bg-white/10 backdrop-blur-sm" />
       <motion.div
         className="relative w-full max-w-xs"
         initial={{ y: 50, opacity: 0 }}
@@ -92,7 +100,7 @@ export function LogIn() {
 
         {/* Animated Lock Icon */}
         <motion.div
-          className="absolute -top-14 left-[125px] z-10 -translate-x-1/2 rounded-full bg-white p-4 shadow-lg"
+          className="absolute -top-14 left-[125px] z-10 -translate-x-1/2 rounded-full bg-gray-800 p-4 shadow-lg"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
@@ -123,7 +131,7 @@ export function LogIn() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <Card className="w-full rounded-xl bg-white p-4 pt-12 shadow-2xl backdrop-blur-md">
+          <Card className="w-full rounded-xl bg-gray-800 p-4 pt-12 shadow-2xl backdrop-blur-md">
             <CardHeader
               variant="gradient"
               color="deep-orange"
@@ -139,6 +147,7 @@ export function LogIn() {
                 label="Email"
                 value={loginId}
                 color="deep-orange"
+                className="text-white"
                 onChange={(e) => setLoginId(e.target.value)}
                 crossOrigin=""
               />
@@ -148,6 +157,7 @@ export function LogIn() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   color="deep-orange"
+                  className="text-white"
                   onChange={(e) => setPassword(e.target.value)}
                   crossOrigin=""
                 />

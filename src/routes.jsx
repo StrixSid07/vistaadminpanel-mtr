@@ -1,29 +1,22 @@
 import {
-  HomeIcon,
   QuestionMarkCircleIcon,
   CheckCircleIcon,
   MapPinIcon,
   HomeModernIcon,
   PhotoIcon,
-  UserCircleIcon,
-  UserIcon,
   SwatchIcon,
   TagIcon,
   NewspaperIcon,
   CreditCardIcon,
-  TableCellsIcon,
-  InformationCircleIcon,
   ServerStackIcon,
-  RectangleStackIcon,
   TicketIcon,
   StopCircleIcon,
   PaperAirplaneIcon,
+  DocumentArrowUpIcon,
+  UserIcon,
+  VideoCameraIcon,
 } from "@heroicons/react/24/solid";
 import {
-  Home,
-  Profile,
-  Tables,
-  Notifications,
   ManageHotel,
   ManageDestination,
   ManageUsers,
@@ -36,9 +29,11 @@ import {
   ManageBooking,
   ManageBoardBasis,
   ManageAirports,
+  ManageDealExternal,
+  AdminVideoTutorials,
+  ManageNewsletter,
 } from "@/pages/dashboard";
-import { SignUp, LogIn } from "@/pages/auth";
-import ManageNewsletter from "./pages/dashboard/managenewslatter";
+import { LogIn } from "@/pages/auth";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -48,30 +43,6 @@ export const routes = [
   {
     layout: "dashboard",
     pages: [
-      // {
-      //   icon: <HomeIcon {...icon} />,
-      //   name: "dashboard",
-      //   path: "/home",
-      //   element: <Home />,
-      // },
-      // {
-      //   icon: <UserCircleIcon {...icon} />,
-      //   name: "profile",
-      //   path: "/profile",
-      //   element: <Profile />,
-      // },
-      // {
-      //   icon: <TableCellsIcon {...icon} />,
-      //   name: "tables",
-      //   path: "/tables",
-      //   element: <Tables />,
-      // },
-      // {
-      //   icon: <InformationCircleIcon {...icon} />,
-      //   name: "notifications",
-      //   path: "/notifications",
-      //   element: <Notifications />,
-      // },
       {
         icon: <UserIcon {...icon} />,
         name: "Manage Users",
@@ -133,6 +104,12 @@ export const routes = [
         element: <ManageDeals />,
       },
       {
+        icon: <DocumentArrowUpIcon {...icon} />,
+        name: "Manage DealsExternal",
+        path: "/manage-external-deals",
+        element: <ManageDealExternal />,
+      },
+      {
         icon: <QuestionMarkCircleIcon {...icon} />,
         name: "Manage Faqs",
         path: "/manage-faqs",
@@ -162,12 +139,18 @@ export const routes = [
         path: "/sign-in",
         element: <LogIn />,
       },
-      // {
-      //   icon: <RectangleStackIcon {...icon} />,
-      //   name: "sign up",
-      //   path: "/sign-up",
-      //   element: <SignUp />,
-      // },
+    ],
+  },
+  {
+    title: "Tutorials",
+    layout: "dashboard",
+    pages: [
+      {
+        icon: <VideoCameraIcon {...icon} />,
+        name: "Video Tutorial",
+        path: "/video-tutorial",
+        element: <AdminVideoTutorials />,
+      },
     ],
   },
 ];

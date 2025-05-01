@@ -19,10 +19,21 @@ export function ManageCarousel() {
   const [formData, setFormData] = useState({ images: [] });
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", type: "" });
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   useEffect(() => {
     fetchCarousels();
   }, []);
+
+  useEffect(() => {
+    if (alert.message) {
+      const timeout = setTimeout(() => {
+        setAlert({ message: "", type: "" });
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [alert]);
 
   const fetchCarousels = async () => {
     try {
@@ -43,32 +54,25 @@ export function ManageCarousel() {
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setCurrentCarousel(null);
-    setAlert({ message: "", type: "" });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.images.length === 0) return;
+
     setLoading(true);
     const formDataToSend = new FormData();
-
-    // Append images to FormData
-    formData.images.forEach((image) => {
-      formDataToSend.append("images", image);
-    });
+    formDataToSend.append("images", formData.images[0]); // Only one image
 
     try {
       if (currentCarousel) {
         await axios.put(`/carousel/${currentCarousel._id}`, formDataToSend, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         });
         setAlert({ message: "Carousel updated successfully!", type: "green" });
       } else {
         await axios.post("/carousel", formDataToSend, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         });
         setAlert({ message: "Carousel added successfully!", type: "green" });
       }
@@ -82,14 +86,21 @@ export function ManageCarousel() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const confirmDelete = (id) => {
+    setDeleteId(id);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleDelete = async () => {
     try {
-      await axios.delete(`/carousel/${id}`);
+      await axios.delete(`/carousel/${deleteId}`);
       setAlert({ message: "Carousel deleted successfully!", type: "green" });
       fetchCarousels();
     } catch (error) {
       console.error("Error deleting carousel:", error);
       setAlert({ message: "Error deleting carousel", type: "red" });
+    } finally {
+      setOpenDeleteDialog(false);
     }
   };
 
@@ -112,24 +123,25 @@ export function ManageCarousel() {
       </div>
 
       <Card className="h-[calc(100vh-150px)] overflow-y-auto rounded-xl p-4 shadow-lg">
-        <div className="space-y-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {carousels.map((carousel) => (
-            <Card key={carousel._id} className="group p-4 shadow-md">
+            <Card
+              key={carousel._id}
+              className="group w-full transform p-4 shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-blue-50 hover:shadow-lg"
+            >
               <div className="flex flex-col gap-4">
-                <Typography variant="h5" color="blue-gray">
-                  Carousel {carousel._id}
-                </Typography>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap justify-start gap-4">
                   {carousel.images.map((image, index) => (
                     <img
                       key={index}
                       src={image}
                       alt={`Carousel Image ${index + 1}`}
-                      className="h-32 w-32 rounded-md object-cover"
+                      className="h-48 w-96 rounded-md object-cover shadow-md transition-all duration-500 ease-in-out"
                     />
                   ))}
                 </div>
-                <div className="flex items-center gap-4">
+
+                <div className="mt-4 flex items-center gap-4">
                   <Button
                     variant="text"
                     color="green"
@@ -141,7 +153,7 @@ export function ManageCarousel() {
                   <Button
                     variant="text"
                     color="red"
-                    onClick={() => handleDelete(carousel._id)}
+                    onClick={() => confirmDelete(carousel._id)}
                     className="p-2"
                   >
                     <TrashIcon className="h-5 w-5" />
@@ -155,26 +167,18 @@ export function ManageCarousel() {
 
       <Dialog open={openDialog} handler={handleCloseDialog} size="md">
         <DialogHeader className="flex items-center justify-between">
-          {currentCarousel ? "Edit Carousel" : "Add Carousel"}
-          {alert.message && (
-            <Alert
-              color={alert.type}
-              onClose={() => setAlert({ message: "", type: "" })}
-              className="mb-4 max-w-xl md:max-w-4xl"
-            >
-              {alert.message}
-            </Alert>
-          )}
+          <Typography variant="h5" className="font-bold text-gray-800">
+            {currentCarousel ? "Edit Carousel" : "Add Carousel"}
+          </Typography>
         </DialogHeader>
         <DialogBody>
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="file"
-              multiple
               accept="image/*"
-              onChange={(e) => {
-                setFormData({ images: Array.from(e.target.files) });
-              }}
+              onChange={(e) =>
+                setFormData({ images: Array.from(e.target.files).slice(0, 1) })
+              }
               required
             />
           </form>
@@ -185,6 +189,27 @@ export function ManageCarousel() {
           </Button>
           <Button onClick={handleSubmit} color="green" disabled={loading}>
             {loading ? "Saving..." : "Save"}
+          </Button>
+        </DialogFooter>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={openDeleteDialog}
+        handler={() => setOpenDeleteDialog(false)}
+      >
+        <DialogHeader>Confirm Deletion</DialogHeader>
+        <DialogBody>
+          <Typography>
+            Are you sure you want to delete this carousel?
+          </Typography>
+        </DialogBody>
+        <DialogFooter className="flex items-center justify-end gap-2">
+          <Button color="red" onClick={handleDelete}>
+            Delete
+          </Button>
+          <Button color="gray" onClick={() => setOpenDeleteDialog(false)}>
+            Cancel
           </Button>
         </DialogFooter>
       </Dialog>

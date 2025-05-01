@@ -19,7 +19,7 @@ import {
 } from "@heroicons/react/24/outline";
 import axios from "@/utils/axiosInstance";
 
-export default function ManageNewsletter() {
+export function ManageNewsletter() {
   const [subscribers, setSubscribers] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [email, setEmail] = useState("");
@@ -227,3 +227,5 @@ export default function ManageNewsletter() {
     </div>
   );
 }
+
+export default ManageNewsletter;
